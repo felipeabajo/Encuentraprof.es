@@ -1,0 +1,65 @@
+﻿@inherits LayoutComponentBase
+
+<PageTitle>BlazorServerSQLite</PageTitle>
+
+<SfMediaQuery @bind-ActiveBreakPoint="activeBreakpoint"></SfMediaQuery>
+
+@if(activeBreakpoint == "Large")
+{
+    bootstrapClass = "m-4 p-4";
+}
+else if (activeBreakpoint == "Medium")
+{
+    bootstrapClass = "mb-5 m-3 p-3 "; @* m-3 p-3  *@
+}
+else 
+{
+    bootstrapClass = "mb-5 m-2 p-2"; @* m-2 p-2  *@
+}
+
+<div class="page">
+    <AuthorizeView>
+        <Authorized>
+            <div class="sidebar">
+                <NavMenu />
+            </div>
+            <main>
+                <article id="mainArticle" class="content @( bootstrapClass )">
+                    @* @bootstrapClass *@
+                    @* m-4 p-4 *@
+                    @Body
+                </article>
+            </main>
+        </Authorized>
+        <NotAuthorized>
+            <main>
+                <div class="auth">
+                    <LoginDisplay />
+                </div>
+                <article id="mainArticle" class="content @( bootstrapClass )">
+                    @Body
+                </article>
+            </main>
+        </NotAuthorized>
+    </AuthorizeView>
+</div>
+<style>
+    .content {
+        padding-top: 48px !important;
+    }
+</style>
+
+@code {
+    private bool collapseNavMenu { get; set; }
+    private string? bootstrapClass { get; set; } 
+    /* => collapseNavMenu ? "collapse" : null; */
+    private string deviceSize { get; set; }
+    private string activeBreakpoint { get; set; }
+
+    protected override void OnInitialized()
+    {
+        SfMediaQuery.Small.MediaQuery = "(max-width: 640px)";
+        SfMediaQuery.Medium.MediaQuery = "(min-width: 641px)";
+        base.OnInitialized();
+    }
+}

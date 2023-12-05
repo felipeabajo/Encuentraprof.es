@@ -1,0 +1,106 @@
+﻿@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+@inject ProtectedSessionStorage ProtectedSessionStorage
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.SplitButtons
+
+<SfMediaQuery @bind-ActiveBreakPoint="activeBreakpoint"></SfMediaQuery>
+@if (activeBreakpoint == "Small")
+{
+    deviceSize = "small-device";
+}
+else if (activeBreakpoint == "Medium")
+{
+    deviceSize = "medium-device";
+}
+else
+{
+    deviceSize = "large-device";
+}
+<AuthorizeView>
+    <Authorized>
+        <SfAppBar Mode="AppBarMode.Regular" ColorMode="AppBarColor.Primary">
+            <img class="logo-image @deviceSize" src="img/logo.png" style="height:100%;" />
+            <div class="menu-button-div @deviceSize">
+                <SfButton CssClass="navbar-toggler e-inherit"
+                          OnClick="@(() => ToggleNavMenu())"
+                          IconCss="e-icons e-menu"></SfButton>
+            </div>
+            <AppBarSpacer></AppBarSpacer>
+            <SfButton CssClass="e-inherit"
+                      OnClick="@(() => NavigateToCsHtmlPage("help"))"
+                      IconCss="e-icons e-circle-info"></SfButton>
+            <SfButton CssClass="e-inherit"
+                      OnClick="@(() => NavigateToCsHtmlPage("/Identity/Account/Logout"))"
+                      IconCss="e-icons e-export"></SfButton>
+        </SfAppBar>
+    </Authorized>
+    <NotAuthorized>
+        <SfAppBar Mode="AppBarMode.Dense" ColorMode="AppBarColor.Primary">
+            <img src="img/logo.png" style="height:100%;" />
+            <AppBarSpacer></AppBarSpacer>
+            <SfButton CssClass="e-inherit" Content="Help"
+                      OnClick="@(() => NavigateToRazorPage("/help"))"
+                      IconCss="e-icons e-circle-info"></SfButton>
+            <SfButton CssClass="e-inherit" Content="Register"
+                      OnClick="@(() => NavigateToCsHtmlPage("/Identity/Account/Register"))"
+                      IconCss="e-icons e-export"></SfButton>
+            <SfButton CssClass="e-inherit" Content="Login"
+                      OnClick="@(() => NavigateToCsHtmlPage("/Identity/Account/Login"))"
+                      IconCss="e-icons e-export"></SfButton>
+        </SfAppBar>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private string deviceSize { get; set; }
+    private string activeBreakpoint { get; set; }
+    private bool collapseNavMenu { get; set; }
+    [Parameter]
+    public NavMenu navMenu { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+    // protected override async Task OnAfterRenderAsync(bool firstRender)
+    // {
+    //     collapseNavMenu = await navMenu.GetCollapseMenu();
+    // }
+    protected async Task ChangeCollapseMenu()
+    {
+        var result = await ProtectedSessionStorage.GetAsync<string>("collapseMenu");
+        string stringResult = result.Success ? result.Value : "Error";
+        bool o = !Boolean.Parse(stringResult);
+        await ProtectedSessionStorage.SetAsync("collapseMenu", o.ToString());
+    }
+    public async void ToggleNavMenu()
+    {
+        collapseNavMenu = await navMenu.GetCollapseMenu();
+        navMenu.ToggleNavMenu();
+    }
+    async Task NavigateToRazorPage(string page)
+    {
+        NavigationManager.NavigateTo(page);
+    }
+
+    async Task NavigateToCsHtmlPage(string page)
+    {
+        try
+        {
+            await JSRuntime.InvokeAsync<object>("open", page, "_self"); //also valid with other a[target] values
+        }
+        catch (Exception e)
+        {
+            System.Diagnostics.Debug.WriteLine(e.ToString());
+        }
+    }
+}
+<style>
+    .menu-button-div:not(.small-device) {
+        display: none !important;
+    }
+    .logo-image.small-device {
+        display: none !important;
+    }
+</style>

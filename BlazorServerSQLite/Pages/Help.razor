@@ -1,0 +1,75 @@
+﻿@page "/help"
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject MyStateContainer myStateContainer
+@inject IEmailSenderService EmailSenderService
+<PageTitle>Help</PageTitle>
+<Heading1 text="Help"></Heading1>
+<div class="row">
+    <EditForm Model="mailRequest">
+        <div class="form-row">
+            <div class="col form-group">
+                <label class="control-label">Email:</label>
+                <SfTextBox Placeholder="Email"
+                @bind-Value=@mailRequest.ToEmail></SfTextBox>
+                <ValidationMessage For="@(() => mailRequest.ToEmail)"></ValidationMessage>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col form-group">
+                <label class="control-label">Subject:</label>
+                <SfTextBox Placeholder="Subject"
+                @bind-Value=@mailRequest.Subject></SfTextBox>
+                <ValidationMessage For="@(() => mailRequest.Subject)"></ValidationMessage>
+            </div>
+        </div>
+        <div class="form-row">
+            <label class="control-label">Body:</label>
+            <SfTextBox Placeholder="Body" Multiline="true"
+            @bind-Value=@mailRequest.Body></SfTextBox>
+            <ValidationMessage For="@(() => mailRequest.Body)"></ValidationMessage>
+        </div>
+        <SfButton OnClick="SendMail" Content="Send"></SfButton>
+    </EditForm>
+</div>
+<div class="row">
+    <div class="col">
+@*         test soporte, tiempo real, teléfono. Icono de helpdesk o mejor una foto mía profesional y presentarme como desarrollador y agente de soporte. 
+ *@ </div>
+    <div class="col">
+        @* formas de contacto en formato texto *@
+    </div>
+    <div class="col">
+        @* buy me a coffe? no apropiado... hasta que tenga FAQs? social icons?*@
+    </div>
+</div>
+@code {
+    private EditContext editContext;
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+    [Inject]
+    UserManager<ApplicationUser> userManager { get; set; }
+    MailRequest mailRequest = new MailRequest();
+    ApplicationUser? user;
+
+    // protected override async Task OnInitializedAsync()
+    // {
+    // }
+    protected override async Task OnInitializedAsync()
+    {
+        // var user2 = (await authenticationStateTask).User;
+        // if (user2.Identity.IsAuthenticated)
+        // {
+        //     user = await userManager.GetUserAsync(user2);
+        // }
+        editContext = new EditContext(mailRequest);
+    }
+    private void SendMail()
+    {
+        //string BodyBuild = "<a href=" + mailRequest.Body + ">Enlace</a>";
+        // mailRequest.ToEmail = user.Email;
+        // mailRequest.Subject = "New lessons request";
+        //mailRequest.Body = BodyBuild;
+        EmailSenderService.SendEmailAsync(mailRequest);
+    }
+}

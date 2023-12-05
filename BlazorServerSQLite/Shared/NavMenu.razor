@@ -1,0 +1,145 @@
+﻿@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+@inject ProtectedSessionStorage ProtectedSessionStorage
+
+<LoginDisplay navMenu="this"/>
+<SfMediaQuery @bind-ActiveBreakPoint="activeBreakpoint"></SfMediaQuery>
+ @if (activeBreakpoint == "Small")
+{
+    deviceSize = "small-device";
+}
+else if (activeBreakpoint == "Medium")
+{
+    deviceSize = "medium-device";
+}
+else
+{
+    deviceSize = "large-device";
+}
+
+<div class="@NavMenuCssClass nav-scrollable bg-light" @onclick="@(() => CollapseNavMenu())">
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <SfButton CssClass="nav-link e-inherit" Content="Home"
+                      IconCss="e-icons e-home"
+                      OnClick="@(() => NavigateToRazorPage("/"))"></SfButton>
+        </div>
+        <AuthorizeView Roles="Teacher" Context="teacherContext">
+            <div class="nav-item px-3">
+                <SfButton CssClass="nav-link e-inherit" Content="Personal information"
+                          IconCss="e-icons e-user"
+                          OnClick="@(() => NavigateToRazorPage("/personal-information"))"></SfButton>
+            </div>
+        </AuthorizeView>
+        <AuthorizeView Roles="Administrator" Context="administratorContext">
+            <div class="nav-item px-3">
+                <SfButton CssClass="nav-link e-inherit" Content="Teacher profile requests"
+                          OnClick="@(() => NavigateToRazorPage("/admin-teacher-profile-requests"))"></SfButton>
+            </div>
+        </AuthorizeView>
+        <div class="nav-item px-3">
+            <SfButton CssClass="nav-link e-inherit" Content="Password"
+                      IconCss="e-icons e-lock"
+                      OnClick="@(() => NavigateToCsHtmlPage("/Identity/Account/Manage/ChangePassword"))"></SfButton>
+        </div>
+        <div class="nav-item px-3">
+            <SfButton CssClass="nav-link e-inherit" Content="Settings"
+                      IconCss="e-icons e-settings"
+                      OnClick="@(() => NavigateToRazorPage("/"))"></SfButton>
+        </div>
+    </nav>
+</div>
+
+@code {
+    private string deviceSize { get; set; }
+    private string activeBreakpoint { get; set; }
+    private bool collapseNavMenu { get; set; }
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    protected override void OnInitialized()
+    {
+        SfMediaQuery.Small.MediaQuery = "(max-width: 640px)";
+        SfMediaQuery.Medium.MediaQuery = "(min-width: 641px)";
+        base.OnInitialized();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        collapseNavMenu = await GetCollapseMenu();
+    }
+    public async void ToggleNavMenu()
+    {
+        await ChangeCollapseMenu();
+        collapseNavMenu = await GetCollapseMenu();
+        StateHasChanged();
+    }
+    public async Task<bool> GetCollapseMenu()
+    {
+        var result = await ProtectedSessionStorage.GetAsync<string>("collapseMenu");
+        bool collapseNavMenu;
+        if (result.Success)
+        {
+            collapseNavMenu = !Boolean.Parse(result.Value);
+        }
+        else
+        {
+            // await ProtectedSessionStorage.SetAsync("collapseMenu", "false");
+            // collapseNavMenu = true;
+            await CollapseNavMenu();
+            collapseNavMenu = true;
+        }
+        return collapseNavMenu;
+    }
+
+    public async Task CollapseNavMenu()
+    {
+        await ProtectedSessionStorage.SetAsync("collapseMenu", "false");
+    }
+
+    protected async Task ChangeCollapseMenu()
+    {
+        var result = await ProtectedSessionStorage.GetAsync<string>("collapseMenu");
+        string stringResult = result.Success ? result.Value : "Error";
+        bool o = !Boolean.Parse(stringResult);
+        await ProtectedSessionStorage.SetAsync("collapseMenu", o.ToString());
+    }
+
+    async Task NavigateToRazorPage(string page)
+    {
+        NavigationManager.NavigateTo(page);
+    }
+    async Task NavigateToCsHtmlPage(string page)
+    {
+        try
+        {
+            await JSRuntime.InvokeAsync<object>("open", page, "_self"); //also valid with other a[target] values
+        }
+        catch (Exception e)
+        {
+            System.Diagnostics.Debug.WriteLine(e.ToString());
+        }
+    }
+}
+<style>
+    .sidebar {
+        background-image: none !important;
+    }
+    .nav-item a, .nav-item a.active {
+        color: inherit !important;
+    }
+
+        .nav-item a:hover {
+            background-color: rgba(0,0,0,.056) !important;
+        }
+
+    .nav-item button.nav-link {
+        border-radius: 4px;
+        height: 3rem;
+        display: flex;
+        align-items: center;
+        line-height: 3rem;
+        justify-content: flex-start;
+        width: 100%;
+    }
+
+</style>

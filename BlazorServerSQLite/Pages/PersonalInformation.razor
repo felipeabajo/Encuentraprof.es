@@ -1,0 +1,1278 @@
+﻿@page "/personal-information"
+@inject IJSRuntime JSRuntime
+@inject ProtectedLocalStorage ProtectedLocalStorage
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@using System.Timers
+
+@attribute [Authorize]
+
+<PageTitle>Personal information</PageTitle>
+<Heading1 text="Personal information"></Heading1>
+@* <TeacherProfileRequestAlert @ref="teacherProfileRequestAlert"></TeacherProfileRequestAlert> *@
+<TeacherNeverPublicAlert @ref="teacherNeverPublicAlert"></TeacherNeverPublicAlert>
+
+<EditForm EditContext="@editContext">
+    <DataAnnotationsValidator/>
+    <div class="form-row single-col">
+        <div class="col form-group">
+            <div class="control-section" id="profile-image-section">
+                    <input type="file" id="img-upload" style="display:none" accept="image/*" />
+                    <div class="e-profile e-img-editor-sample e-hide">
+                    <div class="e-custom-wrapper">
+                        <canvas class="my-2" id="img-canvas" style="max-width: 150px; max-height: 150px;"></canvas>
+                        <img alt="img" id="custom-img" crossorigin="anonymous" @onload="onLoad" style="display: none;"
+                                src="@userImagePath" />
+                        <span id="custom-edit" class="e-custom-edit e-btn e-primary" contenteditable="false" @onclick="Edit">
+                            <SfIcon class="e-custom-icon e-image-editor-icons" contenteditable="false" IconCss="e-icons e-edit"></SfIcon>
+                        </span>
+                    </div>
+                </div>
+            <SfDialog Target="#profile-image-section" @bind-Visible="Visibility"
+                          ShowCloseIcon="true" Width="340px" Height="400px">
+                    @* Header="Edit Profile Image" *@
+                <DialogEvents Opened="dialogOpened" Closed="dialogClosed"></DialogEvents>
+                <DialogTemplates>
+                    <Header>
+                            Upload Profile Image <SfIcon class="info-icon" id="profile-image-info-icon" Name="IconName.CircleInfo"></SfIcon>
+                    </Header>
+                    <Content>
+                        <div class="dialogContent">
+                            @if (isOpened)
+                            {
+                                <small>Supported formats: .jpg. Maximum file size: 5MB. Recommended aspect ratio: 1:1.</small>
+                                    <SfUploader ID="UploadFiles" AllowMultiple="false" AutoUpload="false"
+                                            MinFileSize="1000" MaxFileSize="5000000" AllowedExtensions=".jpg">
+                                        <UploaderAsyncSettings SaveUrl="ImagePersonalInfo/Save"></UploaderAsyncSettings>
+                                        <UploaderEvents Success="@ImageUploaded" BeforeRemove="@BeforeRemove" BeforeUpload="@BeforeUpload"
+                                            OnUploadStart="@UploadStart"></UploaderEvents>
+                                    </SfUploader>
+                            }
+                        </div>
+                    </Content>
+                </DialogTemplates>
+            </SfDialog>
+                    </div>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="col form-group">
+            <label class="control-label">Firstname:</label>
+            <SfIcon class="info-icon" id="firstname-info-icon" Name="IconName.CircleInfo"></SfIcon>
+            <SfTextBox CssClass="@cssClassFirstname" Blur="FirstnameBlur" @bind-Value=@user.Firstname Placeholder="@firstnamePlaceholder"></SfTextBox>
+            @* <SfTextBox CssClass="@cssClassFirstname" Blur="FirstnameBlur" @bind-Value=@firstname Placeholder="@firstnamePlaceholder"></SfTextBox>
+            <WarningMessage cssClass="@pendingConfirmationFirstnameClass" text="@("Pending confirmation: "+ user.UnapprovedFirstname)"> </WarningMessage> *@
+        </div>
+        <div class="col form-group">
+            <label class="control-label">Lastname:</label>
+            <SfTextBox CssClass="@cssClassLastname" Blur="LastnameBlur" @bind-Value=@user.Lastname Placeholder="@lastnamePlaceholder"></SfTextBox>
+@*             <SfTextBox CssClass="@cssClassLastname" @bind-Value=@lastname Blur="LastnameBlur" Placeholder="@lastnamePlaceholder"></SfTextBox>
+            <WarningMessage cssClass="@pendingConfirmationLastnameClass" text="@("Pending confirmation: "+ user.UnapprovedLastname)"> </WarningMessage> *@
+@*             <ValidationMessage For="@(() => user.Lastname)"></ValidationMessage>
+ *@     </div>
+    </div>
+    <div class="form-row">
+        <div class="col form-group">
+            <label class="control-label">Username:</label>
+            <SfTextBox CssClass="@cssClassUsername" Placeholder="Username"
+                        @bind-Value=@user.UserName Blur="UsernameBlur"></SfTextBox>
+            <ValidationMessage For="@(() => user.UserName)"></ValidationMessage>
+        </div>
+        <AuthorizeView Roles="Teacher" Context="teacherContext">
+            <div class="col form-group">
+                <label class="control-label">Province:</label>
+            <SfIcon class="info-icon" id="province-info-icon" Name="IconName.CircleInfo"></SfIcon>
+            <SfAutoComplete @ref="AutoCompleteObj" TValue="string" TItem="Province" Placeholder="Province" @bind-Value="user.Province"
+                    DataSource="@Provinces" FilterType="Syncfusion.Blazor.DropDowns.FilterType.StartsWith">
+                    @* @onkeypress="@(e => KeyPressed(e))" *@
+                <AutoCompleteFieldSettings Value="Name"></AutoCompleteFieldSettings>
+                    <AutoCompleteEvents TItem="Province" TValue="string" ValueChange="@ProvinceChanged" 
+                        ></AutoCompleteEvents>  @* Blur="@ProvinceBlur" *@
+            </SfAutoComplete>
+@*                 <SfTextBox CssClass="@cssClassProvince" Placeholder="Province"
+                            @bind-Value=@user.Province Blur="ProvinceBlur"></SfTextBox>
+                    <ValidationMessage For="@(() => user.Province)"></ValidationMessage> *@
+            </div>
+        </AuthorizeView>
+    </div>
+    <div class="form-row">
+        <div class="col form-group">
+            <label class="control-label">Speciality:</label>
+            <SfIcon class="info-icon" id="speciality-info-icon" Name="IconName.CircleInfo"></SfIcon>
+            <SfAutoComplete @ref="AutoCompleteObj1" TValue="string" TItem="Speciality" Placeholder="Speciality" @bind-Value="user.Speciality"
+                            DataSource="@Specialities" FilterType="Syncfusion.Blazor.DropDowns.FilterType.StartsWith">
+                <AutoCompleteFieldSettings Value="Name"></AutoCompleteFieldSettings>
+                <AutoCompleteEvents TItem="Speciality" TValue="string" ValueChange="@SpecialityChanged"></AutoCompleteEvents>
+            </SfAutoComplete>
+        </div>
+        <div class="col form-group">
+            <label class="control-label">Price per hour (€):</label>
+            <SfNumericTextBox TValue="int?" CssClass="@cssClassUsername" Placeholder="Price" @bind-Value=@user.Price Min="1">
+                <NumericTextBoxEvents TValue="int?" Blur="PriceBlur"></NumericTextBoxEvents>
+            </SfNumericTextBox>
+            <ValidationMessage For="@(() => user.Price)"></ValidationMessage>
+        </div>
+    </div>
+    <AuthorizeView Roles="Teacher" Context="teacherContext">
+@*         @if (!teacherNoRequests)
+        { *@
+        <div class="form-row">
+            <div class="col form-group" >
+                <label class="control-label">Public profile:</label>
+                <SfSwitch CssClass="e-small" Disabled=@switchDisable
+                    ValueChange="PublicProfileValueChangeHandler" TChecked="bool?" @bind-Checked="user.PublicProfile">
+                </SfSwitch> @* @ref=PublicProfileSwitch *@
+                <div class="@cssClassSwitchMessage"> @* style="display:none;" *@
+                    <InformationMessage text="Required fields must be filled for enabling public mode."></InformationMessage>
+                </div>
+            </div> 
+        </div>
+@*         }
+ *@     @* <SfFab Disabled=@requestButtonDisabled
+            CssClass="" OnClick="NewTeacherProfileRequest">Request approval</SfFab> *@
+    </AuthorizeView>
+</EditForm>
+<SfToast ID="do-toast" @ref="DoToastObj" CssClass="toast_template"
+         Timeout="10000" ExtendedTimeout="5000">
+    <ToastPosition X="Left" Y="Bottom"></ToastPosition>
+    <ToastTemplates>
+        <Template>
+            <div id='template_toast'>
+                <div class="horizontal-align">
+                    <div class='toast-content'>
+                        <div class='toast-message'>
+                            Your profile is now private.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </Template>
+    </ToastTemplates>
+</SfToast>
+
+<SfToast ID="undo-toast" @ref="UndoToastObj" CssClass="toast_template"
+         Timeout="10000" ExtendedTimeout="5000" >
+    <ToastPosition X="Left" Y="Bottom"></ToastPosition>
+    <ToastTemplates>
+        <Template>
+            <div id='template_toast'>
+                <div class="horizontal-align">
+                    <div class='toast-content'>
+                        <div class='toast-message'>
+                            Your profile is now public. 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </Template>
+    </ToastTemplates>
+</SfToast>
+
+@code {
+    private EditContext editContext;
+    private string cssClassFirstname;
+    private string cssClassLastname;
+    private string cssClassUsername;
+    private string cssClassProvince;
+    private string pendingConfirmationFirstnameClass = "hide";
+    private string pendingConfirmationLastnameClass = "hide";
+    public ApplicationUser? user;
+    // public string firstname;
+    public string lastname;
+    public string username;
+    public string province;
+    public string speciality;
+    public bool? publicProfile;
+    public int? price;
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+    [Inject]
+    UserManager<ApplicationUser> userManager { get; set; }
+    public string userImagePath;
+    public TeacherProfileRequest? teacherProfileRequest;
+    bool teacherNoRequests { get; set; }
+    TeacherNeverPublicAlert teacherNeverPublicAlert = new TeacherNeverPublicAlert();
+    TeacherProfileRequestAlert teacherProfileRequestAlert = new TeacherProfileRequestAlert();
+    SfToast DoToastObj;
+    SfToast UndoToastObj;
+    private bool isDoToastShown { get; set; }
+    private bool isUndoToastShown { get; set; }
+    private bool? done = false;
+    private bool changeInRequiredFieldsRequest = false;
+    private bool areRequiredFieldsRequestFilled { get; set; }
+    private bool requestButtonDisabled = true;
+    private bool Visibility { get; set; } = false;
+    private bool isOpened { get; set; }
+    private DotNetObjectReference<PersonalInformation>? objRef;
+    private string dataUrl;
+    SfAutoComplete<string, Province> AutoCompleteObj = new SfAutoComplete<string, Province>();
+    SfAutoComplete<string, Speciality> AutoCompleteObj1 = new SfAutoComplete<string, Speciality>();
+    private EditableType EditableOn = EditableType.EditIconClick;
+    private RenderMode Mode = RenderMode.Inline;
+    private bool Disabled { get; set; } = false;
+    private bool ShowButtons { get; set; } = true;
+    private string firstnamePlaceholder { get; set; } = "Enter your firstname";
+    private string lastnamePlaceholder { get; set; } = "Enter your lastname";
+    // SfSwitch<bool?> PublicProfileSwitch = new SfSwitch<bool?>();
+    private bool switchDisable {get; set;}
+    string cssClassSwitchMessage = "hide";
+
+
+    // private void OnFocusSwitch(Microsoft.AspNetCore.Components.Web.FocusEventArgs args)
+    // {
+
+    // }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var user2 = (await authenticationStateTask).User;
+        if (user2.Identity.IsAuthenticated)
+        {
+            user = await userManager.GetUserAsync(user2);
+            editContext = new EditContext(user);
+            username = user.UserName;
+            // if (user.ApprovedFirstname == null)
+            // {
+            //     firstname = firstnamePlaceholder;
+            // }
+            // else
+            // {
+            //     firstname = user.ApprovedFirstname;
+            // }
+            // firstname = user.ApprovedFirstname;
+            // if (user.UnapprovedFirstname != null){
+            //     pendingConfirmationFirstnameClass = "show-message";
+            //     if (user.ApprovedFirstname != null)
+            //     {
+            //         cssClassFirstname = "line-through";
+            //     }
+            // }
+            // lastname = user.ApprovedLastname;
+            // if (user.UnapprovedLastname != null)
+            // {
+            //     pendingConfirmationLastnameClass = "show-message";
+            //     if (user.ApprovedLastname != null)
+            //     {
+            //         cssClassLastname = "line-through";
+            //     }
+            // }
+            province = user.Province;
+            publicProfile = user.PublicProfile;
+            speciality = user.Speciality;
+            price = user.Price;
+            done = !user.PublicProfile;
+            await GetUserImagePath();
+            // GetUserImagePath();
+            await AreRequiredFieldsRequestFilled();
+            if (areRequiredFieldsRequestFilled)
+            {
+                switchDisable = false;
+            }
+            else
+            {
+                switchDisable = true;
+            }
+            if (switchDisable)
+            {
+                cssClassSwitchMessage = "show-message";
+            }
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await LoadRequests();
+            teacherNoRequests = teacherProfileRequest == null ? true : false;
+            await JSRuntime.InvokeAsync<bool>("canvasInterop.onInitialized");
+            StateHasChanged();
+        }
+
+    }
+    async Task LoadRequests()
+    {
+        var path = Navigation.BaseUri + $"TeacherProfileRequest/GetOneTeacherProfileRequestByTeacherId?Id={user.Id}";
+        var result = await Http.GetFromJsonAsync<TeacherProfileRequest>(path);
+        if (result.Id != null)
+        {
+            teacherProfileRequest = result;
+        }
+    }
+    public async void FirstnameBlur(FocusOutEventArgs args)
+    {
+        if (user.Firstname != null && user.Firstname != String.Empty)
+        /* if (firstname != null && firstname != String.Empty) */ /* && firstname != user.ApprovedFirstname */
+        {
+            // user.UnapprovedFirstname = firstname;
+            await UpdateUserContext(user);
+            //code that changes UI (line-through in approved Value, introducing text for unapproved Value)
+            // pendingConfirmationFirstnameClass = "show-message";
+            // if (user.ApprovedFirstname != null)
+            // {
+            //     cssClassFirstname = "line-through";
+            // }
+            ChangeInRequiredFieldsRequest();
+            await AreRequiredFieldsRequestFilled();
+            if (changeInRequiredFieldsRequest && areRequiredFieldsRequestFilled)
+            {
+                switchDisable = false;
+                //StateHasChanged();
+            }
+            // TeacherProfileRequest teacherProfileRequest = new TeacherProfileRequest
+            //     {
+            //         Id = Guid.NewGuid().ToString(),
+            //         UserId = user.Id,
+            //         TypeOfField = "Firstname",
+            //         UnapprovedField = user.UnapprovedFirstname,
+            //         TeacherProfileRequestDate = DateTime.Now,
+            //         TeacherProfileRequestState = "Pending"
+            //     };
+            // var path = Navigation.BaseUri + "TeacherProfileRequest/Add";
+            // var response = await Http.PostAsJsonAsync<TeacherProfileRequest>(path, teacherProfileRequest);
+            // await ProtectedLocalStorage.SetAsync("pending-teacher-profile-request", "false");
+            this.OnAfterRenderAsync(true);
+            teacherNeverPublicAlert.Refresh();
+            // teacherProfileRequestAlert.Refresh();
+            // firstname = user.ApprovedFirstname;
+            StateHasChanged();
+        }
+    }
+
+
+    // public async void FirstnameEdit(Syncfusion.Blazor.InPlaceEditor.ActionEventArgs<string> args)
+    // {
+    //     if (firstname != null && firstname != String.Empty && firstname != user.ApprovedFirstname && firstname != firstnamePlaceholder)
+    //     {
+    //         user.UnapprovedFirstname = firstname;
+    //         await UpdateUserContext(user);
+    //         //code that changes UI (line-through in approved Value, introducing text for unapproved Value)
+    //         pendingConfirmationFirstnameClass = "show-warning";
+    //         if (user.ApprovedFirstname != null)
+    //         {
+    //             cssClassFirstname = "line-through";
+    //         }
+    //         // cssClassFirstname = "line-through";
+    //         // pendingConfirmationFirstnameClass = "show-warning";
+    //         // if (firstname != user.ApprovedFirstname)
+    //         // {
+    //         //     ChangeInRequiredFieldsRequest();
+    //         // }
+    //         // await AreRequiredFieldsRequestFilled();
+    //         // if (changeInRequiredFieldsRequest && areRequiredFieldsRequestFilled)
+    //         // {
+    //         //     requestButtonDisabled = false;
+    //         // }
+    //         TeacherProfileRequest teacherProfileRequest = new TeacherProfileRequest
+    //             {
+    //                 Id = Guid.NewGuid().ToString(),
+    //                 UserId = user.Id,
+    //                 TypeOfField = "firstname",
+    //                 UnapprovedField = user.UnapprovedFirstname,
+    //                 TeacherProfileRequestDate = DateTime.Now,
+    //                 TeacherProfileRequestState = "Pending"
+    //             };
+    //         var path = Navigation.BaseUri + "TeacherProfileRequest/Add";
+    //         var response = await Http.PostAsJsonAsync<TeacherProfileRequest>(path, teacherProfileRequest);
+    //         await ProtectedLocalStorage.SetAsync("pending-teacher-profile-request", "false");
+    //         this.OnAfterRenderAsync(true);
+    //         teacherNoRequestAlert.Refresh();
+    //         teacherProfileRequestAlert.Refresh();
+    //         if (user.ApprovedFirstname == null)
+    //         {
+    //             firstname = firstnamePlaceholder;
+    //         }
+    //         else
+    //         {
+    //             firstname = user.ApprovedFirstname;
+    //         }
+    //         // firstname = user.ApprovedFirstname;
+    //         StateHasChanged();
+    //     }
+    // }
+
+    public async void PriceBlur(NumericBlurEventArgs<int?> args)
+    {
+        await UpdateUserContext(user);
+        if (price != user.Price)
+        {
+            ChangeInRequiredFieldsRequest();
+        }
+        await AreRequiredFieldsRequestFilled();
+        if (changeInRequiredFieldsRequest && areRequiredFieldsRequestFilled)
+        {
+            // requestButtonDisabled = false;
+            switchDisable = true;
+        }
+        StateHasChanged();
+    }
+
+    public async void LastnameBlur(FocusOutEventArgs args)
+    {
+        if (user.Lastname != null && user.Lastname != String.Empty)
+        /* if (firstname != null && firstname != String.Empty) */ /* && firstname != user.ApprovedFirstname */
+        {
+            // user.UnapprovedFirstname = firstname;
+            await UpdateUserContext(user);
+            //code that changes UI (line-through in approved Value, introducing text for unapproved Value)
+            // pendingConfirmationFirstnameClass = "show-message";
+            // if (user.ApprovedFirstname != null)
+            // {
+            //     cssClassFirstname = "line-through";
+            // }
+            ChangeInRequiredFieldsRequest();
+            await AreRequiredFieldsRequestFilled();
+            if (changeInRequiredFieldsRequest && areRequiredFieldsRequestFilled)
+            {
+                switchDisable = false;
+                //StateHasChanged();
+            }
+            // TeacherProfileRequest teacherProfileRequest = new TeacherProfileRequest
+            //     {
+            //         Id = Guid.NewGuid().ToString(),
+            //         UserId = user.Id,
+            //         TypeOfField = "Firstname",
+            //         UnapprovedField = user.UnapprovedFirstname,
+            //         TeacherProfileRequestDate = DateTime.Now,
+            //         TeacherProfileRequestState = "Pending"
+            //     };
+            // var path = Navigation.BaseUri + "TeacherProfileRequest/Add";
+            // var response = await Http.PostAsJsonAsync<TeacherProfileRequest>(path, teacherProfileRequest);
+            // await ProtectedLocalStorage.SetAsync("pending-teacher-profile-request", "false");
+            this.OnAfterRenderAsync(true);
+            teacherNeverPublicAlert.Refresh();
+            // teacherProfileRequestAlert.Refresh();
+            // firstname = user.ApprovedFirstname;
+            StateHasChanged();
+        }
+    }
+
+    // public void LastnameBlur(FocusOutEventArgs args)
+    // {
+    //     UpdateUserContext(user);
+    //     //StateHasChanged();
+    // }
+    public void UsernameBlur(FocusOutEventArgs args)
+    {
+        UpdateUserContext(user);
+        //StateHasChanged();
+    }
+    // public async void ProvinceBlur(FocusOutEventArgs args)
+    // {
+    //     await UpdateUserContext(user);
+    //     //await UpdateUserContext(user); this methods will be replaced by logic that adds the info to the
+    //     //request object that may be used for creating the request in the db (once I include required fields in the 
+    //     //Model of request.
+    //     if (province != user.Province) 
+    //     {
+    //         ChangeInRequiredFieldsRequest();
+    //     }
+    //     await AreRequiredFieldsRequestFilled();
+    //     if (changeInRequiredFieldsRequest && areRequiredFieldsRequestFilled)
+    //     {
+    //         requestButtonDisabled = false;
+    //     }
+    //     StateHasChanged();
+    // }
+
+    // public async void ProvinceBlur(Object args)
+    // {
+    //     await UpdateUserContext(user);
+    //     if (province != user.Province)
+    //     {
+    //         ChangeInRequiredFieldsRequest();
+    //     }
+    //     await AreRequiredFieldsRequestFilled();
+    //     if (changeInRequiredFieldsRequest && areRequiredFieldsRequestFilled)
+    //     {
+    //         requestButtonDisabled = false;
+    //     }
+    //     StateHasChanged();
+    // }
+
+    private async void ProvinceChanged(ChangeEventArgs<string, Province> args)
+    {
+        await UpdateUserContext(user);
+        if (province != user.Province)
+        {
+            ChangeInRequiredFieldsRequest();
+        }
+        await AreRequiredFieldsRequestFilled();
+        if (changeInRequiredFieldsRequest && areRequiredFieldsRequestFilled)
+        {
+            // requestButtonDisabled = false;
+            switchDisable = true;
+        }
+        StateHasChanged();
+    }
+
+    private async void SpecialityChanged(ChangeEventArgs<string, Speciality> args)
+    {
+        await UpdateUserContext(user);
+        if (speciality != user.Speciality)
+        {
+            ChangeInRequiredFieldsRequest();
+        }
+        await AreRequiredFieldsRequestFilled();
+        if (changeInRequiredFieldsRequest && areRequiredFieldsRequestFilled)
+        {
+            // requestButtonDisabled = false;
+            switchDisable = true;
+        }
+        StateHasChanged();
+    }
+
+    // public async void SpecialityBlur(Object args)
+    // {
+    //     await UpdateUserContext(user);
+    //     if (speciality != user.Speciality)
+    //     {
+    //         ChangeInRequiredFieldsRequest();
+    //     }
+    //     await AreRequiredFieldsRequestFilled();
+    //     if (changeInRequiredFieldsRequest && areRequiredFieldsRequestFilled)
+    //     {
+    //         requestButtonDisabled = false;
+    //     }
+    //     StateHasChanged();
+    // }
+
+    // private void BlurHandler(Object args)
+    // {
+    //     System.Diagnostics.Debug.WriteLine(AutoCompleteObj.Value);
+    // }
+
+    public void PublicProfileValueChangeHandler(Syncfusion.Blazor.Buttons.ChangeEventArgs<bool?> args)
+    {
+        if(publicProfile == false || publicProfile == null)
+        {
+            user.EverPublicProfile = true;
+        }
+        UpdateUserContext(user);
+        ToggleDo();
+    }
+
+    private async void ImageUploaded(Syncfusion.Blazor.Inputs.SuccessEventArgs args)
+    {
+        ChangeInRequiredFieldsRequest();
+        await AreRequiredFieldsRequestFilled();
+        if (changeInRequiredFieldsRequest && areRequiredFieldsRequestFilled)
+        {
+            // requestButtonDisabled = false;
+            switchDisable = true;
+        }
+        Timer timer = new Timer();
+        timer.Interval = TimeSpan.FromSeconds(2).TotalMilliseconds;
+        timer.Elapsed += OnTimedEvent;
+        timer.Enabled = true;
+        timer.AutoReset = false;
+    }
+
+    private void OnTimedEvent(Object source, System.Timers.ElapsedEventArgs e)
+    {
+        Visibility = false;
+        InvokeAsync(StateHasChanged);
+    }
+
+    private async Task UploadStart(UploadingEventArgs args)
+    {
+        var path = Navigation.BaseUri + "ImagePersonalInfo/SetUserId";
+        var response = await Http.PostAsJsonAsync<string>(path, user.Id);
+        ChangeInRequiredFieldsRequest();
+    }
+    //Uno de estos fácil que no se use. 
+    private async Task BeforeUpload(BeforeUploadEventArgs args)
+    {
+        var path = Navigation.BaseUri + "ImagePersonalInfo/SetUserId";
+        var response = await Http.PostAsJsonAsync<string>(path, user.Id);
+        ChangeInRequiredFieldsRequest();
+    }
+
+    private void BeforeRemove(BeforeRemoveEventArgs args)
+    {
+        args.PostRawFile = false;
+    }
+    async Task UpdateUserContext(ApplicationUser user)
+    {
+        var path = Navigation.BaseUri + "Users/UpdateUserContext";
+        var response = await Http.PostAsJsonAsync<ApplicationUser>(path, user);
+    }
+    async Task UpdateUser(ApplicationUser user)
+    {
+        var path = Navigation.BaseUri + "Users/UpdateUser";
+        var response = await Http.PostAsJsonAsync<ApplicationUser>(path, user);
+    }
+    public async Task NewTeacherProfileRequest()
+    {
+        var teacherProfileRequestId = Guid.NewGuid().ToString();
+        TeacherProfileRequest teacherProfileRequest = new TeacherProfileRequest
+            {
+                Id = teacherProfileRequestId,
+                UserId = user.Id,
+                TeacherProfileRequestDate = DateTime.Now,
+                TeacherProfileRequestState = "Pending"
+            };
+        var path = Navigation.BaseUri + "TeacherProfileRequest/Add";
+        var response = await Http.PostAsJsonAsync<TeacherProfileRequest>(path, teacherProfileRequest);
+        await ProtectedLocalStorage.SetAsync("pending-teacher-profile-request", "false");
+        this.OnAfterRenderAsync(true);
+        teacherNeverPublicAlert.Refresh();
+        teacherProfileRequestAlert.Refresh();
+    }
+
+    private async Task GetUserImagePath()
+    {
+        var path = Navigation.BaseUri + $"ImagePersonalInfo/IsUserImagePathURLNull?Id={user.Id}";
+        var result = await Http.GetFromJsonAsync<bool>(path);
+        string userIconPath = Navigation.BaseUri + "img/userIcon.png";
+        userImagePath = result ? userIconPath : Navigation.BaseUri + "img/users/" + user.Id + ".jpg";
+    }
+
+    // private async void GetUserImagePath()
+    // {
+    //     var path = Navigation.BaseUri + $"ImagePersonalInfo/IsUserImagePathURLNull?Id={user.Id}";
+    //     var result = await Http.GetFromJsonAsync<bool>(path);
+    //     string userIconPath = Navigation.BaseUri + "img/userIcon.png";
+    //     userImagePath = result ? userIconPath : Navigation.BaseUri + "img/users/" + user.Id + ".jpg";
+    // }
+
+    async Task ToggleDo()
+    {
+        if (done == false)
+        {
+            if (isUndoToastShown)
+            {
+                HideDoToast();
+                HideUndoToast();
+            }
+            Do();
+        }
+        if (done == true)
+        {
+            if (isDoToastShown)
+            {
+                HideDoToast();
+            }
+            Undo();
+        }
+        done = !done;
+    }
+
+    public async Task Do()
+    {
+        if (!isDoToastShown)
+        {
+            ShowDoToast();
+        }
+    }
+
+    public async Task Undo()
+    {
+        if (!isUndoToastShown)
+        {
+            ShowUndoToast();
+        }
+    }
+    private async Task ShowDoToast()
+    {
+        await this.DoToastObj.ShowAsync();
+        isDoToastShown = true;
+    }
+    private async Task HideDoToast()
+    {
+        await this.DoToastObj.HideAsync();
+        isDoToastShown = false;
+    }
+    private async Task ShowUndoToast()
+    {
+        await this.UndoToastObj.ShowAsync();
+        isUndoToastShown = true;
+    }
+    private async Task HideUndoToast()
+    {
+        await this.UndoToastObj.HideAsync();
+        isUndoToastShown = false;
+    }
+    private void ChangeInRequiredFieldsRequest()
+    {
+        changeInRequiredFieldsRequest = true;
+    }
+    private async Task AreRequiredFieldsRequestFilled()
+    {
+        var path = Navigation.BaseUri + $"ImagePersonalInfo/IsUserImagePathURLNull?Id={user.Id}";
+        var result = await Http.GetFromJsonAsync<bool>(path);
+        if ((userImagePath == Navigation.BaseUri + "img/userIcon.png") ||
+        (user.Price == null || user.Price == 0) ||
+        (user.Speciality == null || user.Speciality == String.Empty) ||
+        // (user.ApprovedFirstname == null || user.UnapprovedFirstname == String.Empty) || 
+        (user.Province == null || user.Province == String.Empty)) /*(result) ||   */
+        {
+            areRequiredFieldsRequestFilled = false;
+        }
+        else
+        {
+            areRequiredFieldsRequestFilled = true;
+        }
+    }
+
+    private async Task onLoad()
+    {
+        await JSRuntime.InvokeAsync<bool>("canvasInterop.imageLoaded", objRef);
+    }
+    private async Task dialogOpened(Syncfusion.Blazor.Popups.OpenEventArgs args)
+    {
+        if (!isOpened)
+        {
+            isOpened = true;
+            StateHasChanged();
+        }
+    }
+    private async Task dialogClosed(Syncfusion.Blazor.Popups.CloseEventArgs args)
+    {
+        isOpened = false;
+    }
+    private async void Edit()
+    {
+        this.Visibility = true;
+        dataUrl = await JSRuntime.InvokeAsync<string>("canvasInterop.getImageSource");
+    }
+    public class Province
+    {
+        public string Name { get; set; }
+        public int Code { get; set; }
+    }
+
+    List<Province> Provinces = new List<Province>
+    {
+        new Province (){Name = "Albacete", Code = 02},
+        new Province (){Name = "Alicante", Code = 03},
+        new Province (){Name = "Almería", Code = 04},
+        new Province (){Name = "Álava", Code = 01},
+        new Province (){Name = "Asturias", Code = 33},
+        new Province (){Name = "Ávila", Code = 05},
+        new Province (){Name = "Badajoz", Code = 06},
+        new Province (){Name = "Balears, Illes", Code = 07},
+        new Province (){Name = "Barcelona", Code = 08},
+        new Province (){Name = "Bizkaia", Code = 48},
+        new Province (){Name = "Burgos", Code = 09},
+        new Province (){Name = "Cáceres", Code = 10},
+        new Province (){Name = "Cádiz", Code = 11},
+        new Province (){Name = "Cantabria", Code = 39},
+        new Province (){Name = "Castellón", Code = 12},
+        new Province (){Name = "Ciudad Real", Code = 13},
+        new Province (){Name = "Córdoba", Code = 14},
+        new Province (){Name = "A Coruña", Code = 15},
+        new Province (){Name = "Cuenca", Code = 16},
+        new Province (){Name = "Gipuzkoa", Code = 20},
+        new Province (){Name = "Girona", Code = 17},
+        new Province (){Name = "Granada", Code = 18},
+        new Province (){Name = "Guadalajara", Code = 19},
+        new Province (){Name = "Huelva", Code = 21},
+        new Province (){Name = "Huesca", Code = 22},
+        new Province (){Name = "Jaén", Code = 23},
+        new Province (){Name = "León", Code = 24},
+        new Province (){Name = "Lleida", Code = 25},
+        new Province (){Name = "Lugo", Code = 27},
+        new Province (){Name = "Madrid", Code = 28},
+        new Province (){Name = "Málaga", Code = 29},
+        new Province (){Name = "Murcia", Code = 30},
+        new Province (){Name = "Navarra", Code = 31},
+        new Province (){Name = "Ourense", Code = 32},
+        new Province (){Name = "Palencia", Code = 34},
+        new Province (){Name = "Las Palmas", Code = 35},
+        new Province (){Name = "Pontevedra", Code = 36},
+        new Province (){Name = "La Rioja", Code = 26},
+        new Province (){Name = "Salamanca", Code = 37},
+        new Province (){Name = "Santa Cruz de Tenerife", Code = 38},
+        new Province (){Name = "Segovia", Code = 40},
+        new Province (){Name = "Sevilla", Code = 41},
+        new Province (){Name = "Soria", Code = 42},
+        new Province (){Name = "Tarragona", Code = 43},
+        new Province (){Name = "Teruel", Code = 44},
+        new Province (){Name = "Toledo", Code = 45},
+        new Province (){Name = "Valencia", Code = 46},
+        new Province (){Name = "Valladolid", Code = 47},
+        new Province (){Name = "Zamora", Code = 49},
+        new Province (){Name = "Zaragoza", Code = 50},
+        new Province (){Name = "Ceuta", Code = 51},
+        new Province (){Name = "Melilla", Code = 52},
+    };
+
+    public class Speciality
+    {
+        public string Name { get; set; }
+        public int Code { get; set; }
+    }
+
+    List<Speciality> Specialities = new List<Speciality>
+    {
+        new Speciality (){Name = "French", Code = 01},
+        new Speciality (){Name = "English", Code = 02},
+        new Speciality (){Name = "Spanish", Code = 03}
+    };
+}
+
+<style>
+    #firstname-info-icon:hover:after
+    {
+        content: "Firstname is required for public profiles.";
+    }
+    #province-info-icon:hover::after{
+        content: "Province is required for public profiles.";
+    }
+    #speciality-info-icon:hover::after{
+        content: "Speciality is required for public profiles.";
+    }
+    #profile-image-info-icon:hover::after{
+        content: "Profile image is required for public profiles.";
+    }
+    /*Start CSS for Toast*/
+    .action-span {
+        text-decoration: underline;
+        cursor: grab;
+    }
+
+    #snooze {
+        margin-right: 15px;
+    }
+
+    @@font-face {
+        font-family: 'Toast_icons';
+        src: url(data:application/x-font-ttf;charset=utf-8;base64,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) format('truetype');
+        font-weight: normal;
+        font-style: normal;
+    }
+
+    .toast-icons {
+        font-family: 'Toast_icons' !important;
+        speak: none;
+        font-size: 55px;
+        font-style: normal;
+        font-weight: normal;
+        font-variant: normal;
+        text-transform: none;
+        line-height: 1;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    .bootstrap4 #do-toast .e-toast,
+    .bootstrap5 #do-toast .e-toast,
+    .bootstrap5-dark #do-toast .e-toast {
+        width: 350px !important;
+    }
+
+    .bootstrap4 #undo-toast .e-toast,
+    .bootstrap5 #undo-toast .e-toast,
+    .bootstrap5-dark #undo-toast .e-toast {
+        width: 350px !important;
+    }
+
+    .bootstrap5 #do-toast .e-toast img,
+    .bootstrap5-dark #do-toast .e-toast img {
+        height: 50%;
+        width: 15% !important;
+    }
+
+    .bootstrap5 #undo-toast .e-toast img,
+    .bootstrap5-dark #undo-toast .e-toast img {
+        height: 50%;
+        width: 15% !important;
+    }
+
+    #toast_custom .e-toast .e-toast-title,
+    #toast_custom .e-toast .e-toast-message,
+    #toast_custom .e-toast .e-toast-message .e-toast-content,
+    #toast_custom .e-toast .e-toast-close-icon {
+        color: #fff;
+    }
+
+    #toast_custom .e-toast-container .e-toast .e-toast-message .e-toast-content {
+        padding: 14px 0 0 0;
+    }
+
+    .e-toast-template {
+        display: inline-flex;
+    }
+
+    #toast_custom .e-toast-icon.e-toast-image {
+        border-radius: 50%;
+        background-repeat: no-repeat;
+        background-size: cover;
+        height: 50px !important;
+        width: 50px !important;
+        background-size: 50px 50px;
+        align-self: center;
+    }
+
+    #toast_custom .camden .e-toast-icon.e-toast-image,
+    #toast_custom .chase .e-toast-icon.e-toast-image {
+        width: 65px !important;
+    }
+
+    @@media (max-width: 1052px) {
+        .toast-template-section .row .col-xs-6.col-sm-6.col-lg-6.col-md-6 {
+            width: 100%;
+        }
+    }
+
+    #snooze,
+    #template_toast .snooze,
+    #dismiss {
+        color: #fff;
+    }
+
+    #do-toast .e-toast .e-toast-title,
+    #do-toast .e-toast .e-toast-message,
+    #do-toast .e-toast .e-toast-message .e-toast-content,
+    #do-toast .e-toast .e-toast-close-icon {
+        color: #fff;
+    }
+
+    #undo-toast .e-toast .e-toast-title,
+    #undo-toast .e-toast .e-toast-message,
+    #undo-toast .e-toast .e-toast-message .e-toast-content,
+    #undo-toast .e-toast .e-toast-close-icon {
+        color: #fff;
+    }
+
+    #template_toast .horizontal-align .toast-content .toast-title {
+        font-weight: 500;
+        color: #fff;
+    }
+
+    .material #snooze, .material #dismiss, .fabric #snooze, .fabric #dismiss, .highcontrast #snooze, .highcontrast #dismiss {
+        background-color: transparent;
+        border-color: transparent;
+    }
+
+    #snooze, #template_toast .snooze, #dismiss {
+        color: #fff;
+    }
+
+    #template_toast .horizontal-align .toast-content .toast-message {
+        opacity: 0.75;
+        color: #fff;
+    }
+
+    .material #snooze,
+    .material #dismiss,
+    .fabric #snooze,
+    .fabric #dismiss,
+    .highcontrast #snooze,
+    .highcontrast #dismiss {
+        background-color: transparent;
+        border-color: transparent;
+    }
+
+    .toast-template-section .e-toast-container {
+        top: 0;
+    }
+
+    .toast-template-section #toast_template_target {
+        width: 70%;
+        height: 700px;
+        border: none;
+        margin: auto;
+    }
+
+    @@media (max-width: 540px) {
+        .toast-template-section #toast_template_target {
+            width: 100%;
+        }
+    }
+
+    #undo-toast.e-toast-container .e-toast,
+    #toast_custom .e-toast {
+        background-color: #3277b2;
+    }
+
+    #do-toast.e-toast-container .e-toast,
+    #toast_custom .e-toast {
+        background-color: #3277b2;
+    }
+
+    @@media (min-width: 740px) {
+        .toast-template-section #toast_template_target {
+            width: 400px;
+        }
+    }
+
+    .toast-template-section #toast_template_target .e-toast-container .e-toast {
+        width: inherit !important;
+        display: inline-block;
+    }
+
+    #template_toast .toast-icons {
+        font-size: 35px;
+        height: auto;
+        margin: auto;
+    }
+
+        #template_toast .toast-icons.e-like-toast::before {
+            content: "\e702";
+            color: #fff;
+        }
+
+    #template_toast .horizontal-align {
+        display: inline-flex;
+        flex-direction: row;
+        width: 100%;
+    }
+
+    #template_toast .horizontal-align,
+    #template_toast #snoozedropDown,
+    #template_toast .snooze,
+    #template_toast .snoozeBtn {
+        margin: 10px 0;
+    }
+
+        #template_toast .horizontal-align .toast-content {
+            display: inline-flex;
+            flex: 1;
+            flex-direction: column;
+            margin-left: 10px;
+        }
+
+    .material #template_toast .e-input,
+    .material #template_toast .e-ddl-icon {
+        color: white !important;
+    }
+
+    .toast-template-section #reminder {
+        text-align: center;
+        margin: 15px;
+    }
+
+    @@media (min-width: 320px) and (max-width: 480px) {
+        body > #undo-toast .e-toast {
+            width: 300px !important;
+        }
+
+        body > #do-toast .e-toast {
+            width: 300px !important;
+        }
+    }
+
+    .bootstrap5 .e-toast-container .e-toast .e-toast-message,
+    .bootstrap5-dark .e-toast-container .e-toast .e-toast-message {
+        margin-left: 40px;
+    }
+
+    .bootstrap5 #template_toast,
+    .bootstrap5-dark #template_toast {
+        padding: 10px;
+    }
+
+    #Alarm_turn_on {
+        margin-left: 10px;
+    }
+
+    .material-dark #snoozedropDown .e-input-group.e-control-wrapper,
+    .bootstrap-dark #snoozedropDown .e-input-group.e-control-wrapper,
+    .bootstrap5-dark #snoozedropDown .e-input-group.e-control-wrapper,
+    .fabric-dark #snoozedropDown .e-input-group.e-control-wrapper,
+    .tailwind-dark #snoozedropDown .e-input-group.e-control-wrapper,
+    .fluent-dark #snoozedropDown .e-input-group.e-control-wrapper {
+        background: transparent;
+    }
+
+    div#toast_custom + .e-popup-open {
+        margin-left: 16.8px;
+    }
+
+
+    /*Start CSS for Image*/
+    .e-toolbar .e-toolbar-items.e-tbar-pos .e-toolbar-center {
+        margin: 0 auto !important;
+    }
+
+    .e-ie-toolbar-upload-div.e-hide,
+    .e-ie-toolbar-upload-btn.e-hide {
+        display: none;
+    }
+
+    .e-img-editor-sample,
+    .e-img-editor-sample .control-wrapper {
+        position: relative;
+    }
+
+    .e-profile {
+        display: contents;
+        border-radius: 50%;
+    }
+
+    .e-custom-wrapper {
+        position: relative;
+        text-align: center;
+    }
+
+    .e-custom-edit {
+        display: inline-block;
+        position: relative;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background-color: blue;
+        left: -47px;
+        top: -35px;
+    }
+
+    .e-custom-icon::before {
+        content: '\e701';
+        font-size: 18px;
+        color: white;
+        left: 9px;
+        top: 9px;
+        position: absolute;
+    }
+
+    .tailwind .e-custom-icon::before,
+    .tailwind-dark .e-custom-icon::before {
+        top: 6px;
+    }
+
+    #custom-edit:hover {
+        cursor: pointer;
+    }
+
+    canvas#img-canvas {
+        border-radius: 50%;
+        border: 4px solid darkgrey;
+    }
+
+    .e-img-custom-open {
+        float: left;
+        margin-left: 0 !important;
+    }
+
+    .e-img-custom-reset {
+        float: left;
+    }
+
+    .e-bigger #profile-dialog .e-dlg-header {
+        font-size: 18px !important;
+    }
+
+    .e-dialog.e-lib.e-popup.e-control.e-popup{
+        max-height: inherit !important;
+        height: auto !important;
+    }
+
+    .highcontrast .e-custom-img-btn,
+    .fabric .e-custom-img-btn,
+    .fabric-dark .e-custom-img-btn {
+        padding: 2px 10px !important;
+    }
+
+    .e-bigger .e-custom-img-btn {
+        font-size: 14px !important;
+        padding: 6px 10px !important;
+    }
+
+    .e-bigger.highcontrast .e-custom-img-btn,
+    .e-bigger.fabric .e-custom-img-btn,
+    .e-bigger.fabric-dark .e-custom-img-btn,
+    .e-bigger.material .e-custom-img-btn,
+    .e-bigger.material-dark .e-custom-img-btn {
+        padding: 3px 10px !important;
+    }
+
+    .e-bigger.bootstrap .e-custom-img-btn,
+    .e-bigger.bootstrap-dark .e-custom-img-btn {
+        padding: 1px 10px !important;
+    }
+
+    .dialogContent {
+        height: 100%;
+    }
+
+    .material3 .e-custom-img-btn,
+    .material3-dark .e-custom-img-btn,
+    .e-bigger.material3 .e-custom-img-btn,
+    .e-bigger.material3-dark .e-custom-img-btn {
+        margin-left: 3px !important;
+    }
+
+    .line-through, .line-through .e-editable-value { /* .line-through .e-textbox  */
+        text-decoration-line: line-through;
+    }
+    .hide{
+        display: none;
+    }
+    .show-message{
+        max-width: fit-content;
+    }
+    .e-editable-form {
+        display: flex;
+    }
+    .e-editable-form .e-editable-action-buttons {
+        margin-top: 0;
+        margin-left: 4px;
+        position: inherit;
+    }
+    .e-inplaceeditor .e-editable-action-buttons .e-btn-cancel, .e-inplaceeditor-tip .e-editable-action-buttons .e-btn-cancel{
+        margin:0;
+        display: none;
+    }
+    .e-inplaceeditor{
+        display: block;
+    }
+</style>
+
+<script>
+    window.canvasInterop = {
+        imgSrc: "",
+        onInitialized: function () {
+            document.getElementById('img-upload').onchange = function (args) {
+                var URL = window.URL; var url = URL.createObjectURL((args.target).files[0]);
+                (document.getElementById('img-upload')).value = null;
+                canvasInterop.imgSrc = url.toString();
+                return window.objRef.invokeMethodAsync('FileSelected', url.toString());
+            };
+            return true;
+        },
+        getImageSource: function () {
+            var img = document.querySelector('#custom-img'); // Add
+            return img.src;
+        },
+        imageLoaded: function (objRef) {
+            window.objRef = objRef;
+            if (canvasInterop.imgSrc === '') {
+                var canvas = document.querySelector('#img-canvas');
+                var image = document.querySelector('#custom-img');
+                var ctx = canvas.getContext('2d');
+                canvas.width = image.width < image.height ? image.width : image.height;
+                canvas.height = canvas.width;
+                ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+                document.querySelector('.e-profile').classList.remove('e-hide');
+            }
+            return true;
+        },
+        fileSelect: function () {
+            var inputFile = document.getElementById('img-upload');
+            inputFile.click();
+            return true;
+        },
+        applyImage: function (a) {
+            var dataId = document.querySelector('.e-image-editor').getAttribute('dataId');
+            var inst = window.sfBlazor.getCompInstance(dataId).imageEditorBase;
+            var croppedData = inst.getImageData();
+            var canvas = document.querySelector('#img-canvas');
+            var ctx = canvas.getContext('2d');
+            var parentDiv = document.querySelector('.e-profile');
+            var tempCanvas = parentDiv.appendChild(document.createElement('canvas'));
+            var tempContext = tempCanvas.getContext('2d');
+            tempCanvas.width = croppedData.width; tempCanvas.height = croppedData.height;
+            tempContext.putImageData(croppedData, 0, 0);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(tempCanvas, 0, 0, canvas.width, canvas.height);
+            tempCanvas.remove();
+            if (canvasInterop.imgSrc !== '') {
+                const img = document.querySelector('#custom-img');
+                img.src = canvasInterop.imgSrc;
+            }
+            return true;
+        }
+    };
+</script>

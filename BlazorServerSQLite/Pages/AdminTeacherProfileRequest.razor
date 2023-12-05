@@ -1,0 +1,102 @@
+﻿@page "/admin-teacher-profile-requests"
+@using static TeacherProfileRequestController;
+@attribute [Authorize(Roles = "Administrator")]
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject IJSRuntime JsRuntime
+
+
+<PageTitle>Administration of teacher profile requests</PageTitle>
+<Heading1 text="Administration of teacher profile requests"></Heading1>
+
+<SfGrid DataSource="@teacherProfileRequests" EnableInfiniteScrolling=true Height="100%"
+        AllowFiltering=true Toolbar="@toolbarItems" @ref="Grid" EnableStickyHeader=true>
+   <GridEditSettings AllowEditing=true Mode="EditMode.Normal"></GridEditSettings>
+    <GridEvents RowUpdated="RowUpdatedHandler" TValue="TeacherProfileRequest"></GridEvents>
+    <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+    <GridPageSettings PageSize="20"></GridPageSettings>
+    <GridColumns>
+        <GridColumn Field="@nameof(TeacherProfileRequest.UserId)" HeaderText="User ID" IsPrimaryKey=true Width="120" AllowEditing="false"></GridColumn>
+        <GridColumn Field="@nameof(TeacherProfileRequest.TeacherProfileRequestDate)" HeaderText="Created on" Width="120" AllowEditing="false"></GridColumn>
+        <GridColumn Field="@nameof(TeacherProfileRequest.TypeOfField)" HeaderText="Type of field" Width="120" AllowEditing="false"></GridColumn>
+        <GridColumn Field="@nameof(TeacherProfileRequest.UnapprovedField)" HeaderText="Unapproved field" Width="120" AllowEditing="false"></GridColumn>
+        <GridColumn Field="@nameof(TeacherProfileRequest.TeacherProfileRequestState)" HeaderText="Request State" 
+            Width="120" EditType="EditType.DropDownEdit"></GridColumn>
+
+    </GridColumns>
+</SfGrid>
+@code {
+    SfGrid<TeacherProfileRequest> Grid { get; set; }
+    public string[] toolbarItems = new string[] { "Edit","Delete","Update","Cancel" };
+    public List<TeacherProfileRequest> teacherProfileRequests;
+    [Inject]
+    UserManager<ApplicationUser> userManager { get; set; }
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+    public ApplicationUser? user;
+    public ApplicationUser? teacher;
+
+    public async void Refresh()
+    {
+        await LoadRequests();
+        StateHasChanged();
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        var user2 = (await authenticationStateTask).User;
+        if (user2.Identity.IsAuthenticated)
+        {
+            user = await userManager.GetUserAsync(user2);
+        }
+        base.OnInitialized();
+        await LoadRequests();
+    }
+    async Task LoadRequests()
+    {
+        var path = Navigation.BaseUri + "TeacherProfileRequest/GetTeacherProfileRequests";
+        var result = await Http.GetFromJsonAsync<List<TeacherProfileRequest>>(path);
+        teacherProfileRequests = result;
+    }
+
+    public async Task RowUpdatedHandler(RowUpdatedEventArgs<TeacherProfileRequest> args)
+    {
+        switch (args.Data.TeacherProfileRequestState)
+        {
+            case "Approved":
+                TeacherProfileRequestViewModel viewModel = new TeacherProfileRequestViewModel(args.Data.UserId, args.Data.TypeOfField); 
+                var path2 = Navigation.BaseUri + "TeacherProfileRequest/OverrideApprovedTeacherProfileRequest";
+                var result2 = await Http.PostAsJsonAsync(path2, viewModel);
+                // var result2 = await Http.PostAsJsonAsync(path2, args.Data.UserId);
+                var path = Navigation.BaseUri + "TeacherProfileRequest/ApproveTeacherProfileRequest";
+                var result = await Http.PostAsJsonAsync(path, args.Data);
+                var path4 = Navigation.BaseUri + $"Users/GetUser";
+                var result4 = await Http.PostAsJsonAsync<string>(path4, args.Data.UserId);
+                var responseBody = await result4.Content.ReadAsStringAsync();
+                var getUserResponse = JsonConvert.DeserializeObject<ApplicationUser>(responseBody);
+                teacher = getUserResponse;
+                var path3 = Navigation.BaseUri + "Users/UpdateUserContext";
+                // teacher.PublicProfile = true;
+                switch (viewModel.typeOfField)
+                {
+                    case "Firstname":
+                        // teacher.ApprovedFirstname = teacher.UnapprovedFirstname;
+                        // teacher.UnapprovedFirstname = null;
+                        break;
+                    case "Lastname":
+                        // teacher.ApprovedLastname = teacher.UnapprovedLastname;
+                        // teacher.UnapprovedLastname = null;
+                        break;
+                }
+
+                var result3 = await Http.PostAsJsonAsync(path3, teacher);
+                Refresh();
+                break;
+        }
+    }
+}
+<style>
+    .e-grid .e-toolbar .e-tbar-btn-text,
+    .e-grid .e-toolbar .e-toolbar-items .e-toolbar-item .e-tbar-btn-text{
+        display: none;
+    }
+</style>

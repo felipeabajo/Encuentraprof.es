@@ -1,0 +1,40 @@
+﻿@* Workinprogress *@
+<SfButton Content="@content" IconCss="@iconCss"
+          Disabled="@disabled" CssClass="@cssClass"
+          IsToggle="@isToggle" IsPrimary="@isPrimary" IconPosition="@iconPosition.Value">
+</SfButton>
+
+
+@code {
+    [Parameter]
+    public string? content { get; set; }
+    [Parameter]
+    public string? iconCss { get; set; }
+    [Parameter]
+    public bool disabled { get; set; }
+    [Parameter]
+    public string? cssClass { get; set; }
+    [Parameter]
+    public bool isToggle { get; set; }
+    [Parameter]
+    public bool isPrimary {get;set;}
+    [Parameter]
+    public IconPosition? iconPosition { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (cssClass == null)
+        {
+            cssClass = "e-inherit";
+        }
+        if (iconPosition == null)
+        {
+            iconPosition = IconPosition.Left;
+        }
+        if (content == null)
+        {
+            content = "Button";
+        }
+    }
+
+ }

@@ -1,0 +1,57 @@
+﻿@inject NavigationManager navigationManager
+
+<div class="col" id="User_@(user.Id)">
+    <SfCard ID="" CssClass="user-card">
+        <CardImage Image="@userImagePath" />
+        @* <CardHeader Title="@title" SubTitle="@user.Province" /> *@
+        @* <CardHeader Title="@user.ApprovedFirstname" SubTitle=@("Profe de " + user.Speciality + " en " + user.Province)></CardHeader> *@
+    <CardContent>
+            @* Descripción personal , bio  *@ @* Text="Contact" *@
+@*             <SfButton Content="Test" IsPrimary=true></SfButton>*@
+ @*         <SfMenu TValue="MenuItem" Orientation="Syncfusion.Blazor.Navigations.Orientation.Horizontal">
+            <MenuItems>
+                <SfButton Content="Test"></SfButton>
+                <MenuItem> 
+                    <SfButton Content="Test"></SfButton>
+                </MenuItem>
+                <MenuItem Text="Add to favorites"></MenuItem>
+            </MenuItems>
+        </SfMenu> *@
+    </CardContent>
+    <CardFooter>
+@*      <a href="/">@user.Province</a>  Link to topic page per Province when available (list of teachers of a certain province until then) 
+        <a href="/">@user.Speciality</a> *@
+        <strong>@user.Price €</strong> hora
+    </CardFooter>
+</SfCard>
+</div>
+
+@code {
+    [CascadingParameter(Name = "User")]
+    ApplicationUser? user { get; set; }
+    string userImagePath { get; set; }
+    private string baseUri { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        baseUri = navigationManager.BaseUri;
+        userImagePath = baseUri + "img/users/" + user.Id + ".jpg";// "img/logo.png"
+    }
+}
+
+<style>
+    .e-card{
+        border: none;
+        transition: all 0.5s ease-in-out;
+        transform: scale(1);
+
+    }
+    .e-card:hover{
+        transform: scale(1.03);
+        box-shadow: 2px 4px 4px #777;
+    }
+    .e-card .e-card-image{
+        min-height: 200px;
+        border-radius: 4px;
+    }
+</style>

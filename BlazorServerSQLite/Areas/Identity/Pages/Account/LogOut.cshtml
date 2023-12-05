@@ -1,0 +1,34 @@
+﻿@page
+@using BlazorServerSQLite.Data;
+@using Microsoft.AspNetCore.Identity
+@attribute [IgnoreAntiforgeryToken]
+@inject SignInManager<ApplicationUser> SignInManager
+@functions {
+    public async Task<IActionResult> OnPost()
+    {
+        if (SignInManager.IsSignedIn(User))
+        {
+            await SignInManager.SignOutAsync();
+        }
+
+        return Redirect("~/");
+    }
+}
+<h1>
+    Big thank you message. Stlye normal/informal: Thank you for your visit. Hope to see you soon.
+    Links for reviews (Google, Trustpilot)
+</h1>
+<form class="form" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="/" method="post">
+    <button class="e-btn e-primary e-css m-1" type="submit">Logout</button> @* class="nav-link btn btn-link text-dark" *@
+</form>
+<form action="/">
+    <button class="e-btn e-css m-1">Remain signed in</button> @* class="nav-link btn btn-link text-dark" *@
+</form>
+
+<style>
+    .e-btn.e-css{
+
+        width: 100%;
+        height: 3em;
+    }
+</style>

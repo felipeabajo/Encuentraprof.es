@@ -1,0 +1,17 @@
+﻿<div class="row flex-grid e-cards">
+    @foreach (ApplicationUser user in userList)
+    {
+        <CascadingValue Value="user" Name="User">
+            <UserCard></UserCard>
+        </CascadingValue>
+    }
+</div>
+@code {
+    [CascadingParameter(Name = "UsersList")]
+    private List<ApplicationUser> userList { get; set; }
+    [CascadingParameter(Name = "User")]
+    ApplicationUser? user { get; set; }
+}
+
+<style>
+</style>
