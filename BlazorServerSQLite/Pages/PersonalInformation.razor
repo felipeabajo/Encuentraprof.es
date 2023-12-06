@@ -270,11 +270,17 @@
             }
             else
             {
+                user.PublicProfile = false;
+                await UpdateUserContext(user);
                 switchDisable = true;
             }
             if (switchDisable)
             {
                 cssClassSwitchMessage = "show-message";
+            }
+            else
+            {
+                cssClassSwitchMessage = "hide";
             }
         }
     }
@@ -301,9 +307,9 @@
     }
     public async void FirstnameBlur(FocusOutEventArgs args)
     {
-        if (user.Firstname != null && user.Firstname != String.Empty)
+        // if (user.Firstname != null && user.Firstname != String.Empty)
         /* if (firstname != null && firstname != String.Empty) */ /* && firstname != user.ApprovedFirstname */
-        {
+        // {
             // user.UnapprovedFirstname = firstname;
             await UpdateUserContext(user);
             //code that changes UI (line-through in approved Value, introducing text for unapproved Value)
@@ -317,7 +323,20 @@
             if (changeInRequiredFieldsRequest && areRequiredFieldsRequestFilled)
             {
                 switchDisable = false;
-                //StateHasChanged();
+            }
+            else
+            {
+                user.PublicProfile = false;
+                await UpdateUserContext(user);
+                switchDisable = true;
+            }
+            if (switchDisable)
+            {
+                cssClassSwitchMessage = "show-message";
+            }
+            else
+            {
+                cssClassSwitchMessage = "hide";
             }
             // TeacherProfileRequest teacherProfileRequest = new TeacherProfileRequest
             //     {
@@ -336,7 +355,7 @@
             // teacherProfileRequestAlert.Refresh();
             // firstname = user.ApprovedFirstname;
             StateHasChanged();
-        }
+        // }
     }
 
 
@@ -390,22 +409,6 @@
     //         StateHasChanged();
     //     }
     // }
-
-    public async void PriceBlur(NumericBlurEventArgs<int?> args)
-    {
-        await UpdateUserContext(user);
-        if (price != user.Price)
-        {
-            ChangeInRequiredFieldsRequest();
-        }
-        await AreRequiredFieldsRequestFilled();
-        if (changeInRequiredFieldsRequest && areRequiredFieldsRequestFilled)
-        {
-            // requestButtonDisabled = false;
-            switchDisable = true;
-        }
-        StateHasChanged();
-    }
 
     public async void LastnameBlur(FocusOutEventArgs args)
     {
@@ -500,8 +503,21 @@
         await AreRequiredFieldsRequestFilled();
         if (changeInRequiredFieldsRequest && areRequiredFieldsRequestFilled)
         {
-            // requestButtonDisabled = false;
+            switchDisable = false;
+        }
+        else
+        {
+            user.PublicProfile = false;
+            await UpdateUserContext(user);
             switchDisable = true;
+        }
+        if (switchDisable)
+        {
+            cssClassSwitchMessage = "show-message";
+        }
+        else
+        {
+            cssClassSwitchMessage = "hide";
         }
         StateHasChanged();
     }
@@ -516,11 +532,54 @@
         await AreRequiredFieldsRequestFilled();
         if (changeInRequiredFieldsRequest && areRequiredFieldsRequestFilled)
         {
-            // requestButtonDisabled = false;
+            switchDisable = false;
+        }
+        else
+        {
+            user.PublicProfile = false;
+            await UpdateUserContext(user);
             switchDisable = true;
+        }
+        if (switchDisable)
+        {
+            cssClassSwitchMessage = "show-message";
+        }
+        else
+        {
+            cssClassSwitchMessage = "hide";
         }
         StateHasChanged();
     }
+
+    public async void PriceBlur(NumericBlurEventArgs<int?> args)
+    {
+        await UpdateUserContext(user);
+        if (price != user.Price)
+        {
+            ChangeInRequiredFieldsRequest();
+        }
+        await AreRequiredFieldsRequestFilled();
+        if (changeInRequiredFieldsRequest && areRequiredFieldsRequestFilled)
+        {
+            switchDisable = false;
+        }
+        else
+        {
+            user.PublicProfile = false;
+            await UpdateUserContext(user);
+            switchDisable = true;
+        }
+        if (switchDisable)
+        {
+            cssClassSwitchMessage = "show-message";
+        }
+        else
+        {
+            cssClassSwitchMessage = "hide";
+        }
+        StateHasChanged();
+    }
+
 
     // public async void SpecialityBlur(Object args)
     // {
@@ -542,14 +601,14 @@
     //     System.Diagnostics.Debug.WriteLine(AutoCompleteObj.Value);
     // }
 
-    public void PublicProfileValueChangeHandler(Syncfusion.Blazor.Buttons.ChangeEventArgs<bool?> args)
+    public async void PublicProfileValueChangeHandler(Syncfusion.Blazor.Buttons.ChangeEventArgs<bool?> args)
     {
         if(publicProfile == false || publicProfile == null)
         {
             user.EverPublicProfile = true;
         }
-        UpdateUserContext(user);
-        ToggleDo();
+        await UpdateUserContext(user);
+        await ToggleDo();
     }
 
     private async void ImageUploaded(Syncfusion.Blazor.Inputs.SuccessEventArgs args)
@@ -559,7 +618,7 @@
         if (changeInRequiredFieldsRequest && areRequiredFieldsRequestFilled)
         {
             // requestButtonDisabled = false;
-            switchDisable = true;
+            switchDisable = false;
         }
         Timer timer = new Timer();
         timer.Interval = TimeSpan.FromSeconds(2).TotalMilliseconds;
@@ -704,6 +763,7 @@
         if ((userImagePath == Navigation.BaseUri + "img/userIcon.png") ||
         (user.Price == null || user.Price == 0) ||
         (user.Speciality == null || user.Speciality == String.Empty) ||
+        (user.Firstname == null || user.Firstname == String.Empty) ||
         // (user.ApprovedFirstname == null || user.UnapprovedFirstname == String.Empty) || 
         (user.Province == null || user.Province == String.Empty)) /*(result) ||   */
         {
