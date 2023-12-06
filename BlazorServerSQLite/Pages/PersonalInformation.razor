@@ -3,8 +3,6 @@
 @inject ProtectedLocalStorage ProtectedLocalStorage
 @inject HttpClient Http
 @inject NavigationManager Navigation
-@using System.Timers
-
 @attribute [Authorize]
 
 <PageTitle>Personal information</PageTitle>
@@ -39,12 +37,12 @@
                             @if (isOpened)
                             {
                                 <small>Supported formats: .jpg. Maximum file size: 5MB. Recommended aspect ratio: 1:1.</small>
-                                    <SfUploader ID="UploadFiles" AllowMultiple="false" AutoUpload="false"
-                                            MinFileSize="1000" MaxFileSize="5000000" AllowedExtensions=".jpg">
-                                        <UploaderAsyncSettings SaveUrl="ImagePersonalInfo/Save"></UploaderAsyncSettings>
-                                        <UploaderEvents Success="@ImageUploaded" BeforeRemove="@BeforeRemove" BeforeUpload="@BeforeUpload"
-                                            OnUploadStart="@UploadStart"></UploaderEvents>
-                                    </SfUploader>
+                                <SfUploader ID="UploadFiles" AllowMultiple="false" AutoUpload="false"
+                                        MinFileSize="1000" MaxFileSize="5000000" AllowedExtensions=".jpg">
+                                    <UploaderAsyncSettings SaveUrl="ImagePersonalInfo/Save"></UploaderAsyncSettings>
+                                    <UploaderEvents Success="@ImageUploaded" BeforeRemove="@BeforeRemove" 
+                                        BeforeUpload="@BeforeUpload"></UploaderEvents> @* OnUploadStart="@UploadStart" *@
+                                </SfUploader>
                             }
                         </div>
                     </Content>
@@ -90,6 +88,7 @@
         <div class="form-row">
             <div class="col form-group">
                 <label class="control-label">Price per hour (€):</label>
+                <SfIcon class="info-icon" id="province-info-icon" Name="IconName.CircleInfo"></SfIcon>
                 <SfNumericTextBox TValue="int?" CssClass="@cssClassUsername" Placeholder="Price" @bind-Value=@user.Price Min="1">
                     <NumericTextBoxEvents TValue="int?" Blur="PriceBlur"></NumericTextBoxEvents>
                 </SfNumericTextBox>
@@ -375,12 +374,6 @@
         {
             switchDisable = false;
         }
-        // else
-        // {
-        //     user.PublicProfile = false;
-        //     await UpdateUserContext(user);
-        //     switchDisable = true;
-        // }
         if (switchDisable)
         {
             cssClassSwitchMessage = "show-message";
@@ -398,12 +391,12 @@
         InvokeAsync(StateHasChanged);
     }
 
-    private async Task UploadStart(UploadingEventArgs args)
-    {
-        var path = Navigation.BaseUri + "ImagePersonalInfo/SetUserId";
-        var response = await Http.PostAsJsonAsync<string>(path, user.Id);
-        ChangeInRequiredFieldsRequest();
-    }
+    // private async Task UploadStart(UploadingEventArgs args)
+    // {
+    //     var path = Navigation.BaseUri + "ImagePersonalInfo/SetUserId";
+    //     var response = await Http.PostAsJsonAsync<string>(path, user.Id);
+    //     ChangeInRequiredFieldsRequest();
+    // }
     //Uno de estos fácil que no se use. 
     private async Task BeforeUpload(BeforeUploadEventArgs args)
     {
