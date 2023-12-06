@@ -5,3 +5,4 @@
 5. Remove UploadStart Event for Setting userId (done with BeforeUpload).
 6. Clean-up IsUserImagePathURLNull in ImagePersonalController. Comment references to requests in PersonalInformation.
 7. Change name of changeInRequiredFields and areRequiredFieldsFilled for variable and methods.
+8. Restore IsUserImagePathURLNull method in ImagePersonalController (since in reality it's used).
