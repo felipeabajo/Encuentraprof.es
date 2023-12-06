@@ -9,7 +9,6 @@
 
 <PageTitle>Personal information</PageTitle>
 <Heading1 text="Personal information"></Heading1>
-@* <TeacherProfileRequestAlert @ref="teacherProfileRequestAlert"></TeacherProfileRequestAlert> *@
 <TeacherNeverPublicAlert @ref="teacherNeverPublicAlert"></TeacherNeverPublicAlert>
 
 <EditForm EditContext="@editContext">
@@ -30,7 +29,6 @@
                 </div>
             <SfDialog Target="#profile-image-section" @bind-Visible="Visibility"
                           ShowCloseIcon="true" Width="340px" Height="400px">
-                    @* Header="Edit Profile Image" *@
                 <DialogEvents Opened="dialogOpened" Closed="dialogClosed"></DialogEvents>
                 <DialogTemplates>
                     <Header>
@@ -60,76 +58,59 @@
             <label class="control-label">Firstname:</label>
             <SfIcon class="info-icon" id="firstname-info-icon" Name="IconName.CircleInfo"></SfIcon>
             <SfTextBox CssClass="@cssClassFirstname" Blur="FirstnameBlur" @bind-Value=@user.Firstname Placeholder="@firstnamePlaceholder"></SfTextBox>
-            @* <SfTextBox CssClass="@cssClassFirstname" Blur="FirstnameBlur" @bind-Value=@firstname Placeholder="@firstnamePlaceholder"></SfTextBox>
-            <WarningMessage cssClass="@pendingConfirmationFirstnameClass" text="@("Pending confirmation: "+ user.UnapprovedFirstname)"> </WarningMessage> *@
         </div>
         <div class="col form-group">
             <label class="control-label">Lastname:</label>
             <SfTextBox CssClass="@cssClassLastname" Blur="LastnameBlur" @bind-Value=@user.Lastname Placeholder="@lastnamePlaceholder"></SfTextBox>
-@*             <SfTextBox CssClass="@cssClassLastname" @bind-Value=@lastname Blur="LastnameBlur" Placeholder="@lastnamePlaceholder"></SfTextBox>
-            <WarningMessage cssClass="@pendingConfirmationLastnameClass" text="@("Pending confirmation: "+ user.UnapprovedLastname)"> </WarningMessage> *@
-@*             <ValidationMessage For="@(() => user.Lastname)"></ValidationMessage>
- *@     </div>
-    </div>
-    <div class="form-row">
-        <div class="col form-group">
-            <label class="control-label">Username:</label>
-            <SfTextBox CssClass="@cssClassUsername" Placeholder="Username"
-                        @bind-Value=@user.UserName Blur="UsernameBlur"></SfTextBox>
-            <ValidationMessage For="@(() => user.UserName)"></ValidationMessage>
-        </div>
-        <AuthorizeView Roles="Teacher" Context="teacherContext">
-            <div class="col form-group">
-                <label class="control-label">Province:</label>
-            <SfIcon class="info-icon" id="province-info-icon" Name="IconName.CircleInfo"></SfIcon>
-            <SfAutoComplete @ref="AutoCompleteObj" TValue="string" TItem="Province" Placeholder="Province" @bind-Value="user.Province"
-                    DataSource="@Provinces" FilterType="Syncfusion.Blazor.DropDowns.FilterType.StartsWith">
-                    @* @onkeypress="@(e => KeyPressed(e))" *@
-                <AutoCompleteFieldSettings Value="Name"></AutoCompleteFieldSettings>
-                    <AutoCompleteEvents TItem="Province" TValue="string" ValueChange="@ProvinceChanged" 
-                        ></AutoCompleteEvents>  @* Blur="@ProvinceBlur" *@
-            </SfAutoComplete>
-@*                 <SfTextBox CssClass="@cssClassProvince" Placeholder="Province"
-                            @bind-Value=@user.Province Blur="ProvinceBlur"></SfTextBox>
-                    <ValidationMessage For="@(() => user.Province)"></ValidationMessage> *@
-            </div>
-        </AuthorizeView>
-    </div>
-    <div class="form-row">
-        <div class="col form-group">
-            <label class="control-label">Speciality:</label>
-            <SfIcon class="info-icon" id="speciality-info-icon" Name="IconName.CircleInfo"></SfIcon>
-            <SfAutoComplete @ref="AutoCompleteObj1" TValue="string" TItem="Speciality" Placeholder="Speciality" @bind-Value="user.Speciality"
-                            DataSource="@Specialities" FilterType="Syncfusion.Blazor.DropDowns.FilterType.StartsWith">
-                <AutoCompleteFieldSettings Value="Name"></AutoCompleteFieldSettings>
-                <AutoCompleteEvents TItem="Speciality" TValue="string" ValueChange="@SpecialityChanged"></AutoCompleteEvents>
-            </SfAutoComplete>
-        </div>
-        <div class="col form-group">
-            <label class="control-label">Price per hour (€):</label>
-            <SfNumericTextBox TValue="int?" CssClass="@cssClassUsername" Placeholder="Price" @bind-Value=@user.Price Min="1">
-                <NumericTextBoxEvents TValue="int?" Blur="PriceBlur"></NumericTextBoxEvents>
-            </SfNumericTextBox>
-            <ValidationMessage For="@(() => user.Price)"></ValidationMessage>
-        </div>
+
+      </div>
     </div>
     <AuthorizeView Roles="Teacher" Context="teacherContext">
-@*         @if (!teacherNoRequests)
-        { *@
         <div class="form-row">
-            <div class="col form-group" >
-                <label class="control-label">Public profile:</label>
-                <SfSwitch CssClass="e-small" Disabled=@switchDisable
-                    ValueChange="PublicProfileValueChangeHandler" TChecked="bool?" @bind-Checked="user.PublicProfile">
-                </SfSwitch> @* @ref=PublicProfileSwitch *@
-                <div class="@cssClassSwitchMessage"> @* style="display:none;" *@
-                    <InformationMessage text="Required fields must be filled for enabling public mode."></InformationMessage>
+    @*         <div class="col form-group">
+                <label class="control-label">Username:</label>
+                <SfTextBox CssClass="@cssClassUsername" Placeholder="Username"
+                            @bind-Value=@user.UserName Blur="UsernameBlur"></SfTextBox>
+                <ValidationMessage For="@(() => user.UserName)"></ValidationMessage>
+            </div> *@
+                <div class="col form-group">
+                    <label class="control-label">Speciality:</label>
+                    <SfIcon class="info-icon" id="speciality-info-icon" Name="IconName.CircleInfo"></SfIcon>
+                    <SfAutoComplete @ref="AutoCompleteObj1" TValue="string" TItem="Speciality" Placeholder="Speciality" @bind-Value="user.Speciality"
+                                    DataSource="@Specialities" FilterType="Syncfusion.Blazor.DropDowns.FilterType.StartsWith">
+                        <AutoCompleteFieldSettings Value="Name"></AutoCompleteFieldSettings>
+                        <AutoCompleteEvents TItem="Speciality" TValue="string" ValueChange="@SpecialityChanged"></AutoCompleteEvents>
+                    </SfAutoComplete>
                 </div>
-            </div> 
+                <div class="col form-group">
+                    <label class="control-label">Province:</label>
+                <SfIcon class="info-icon" id="province-info-icon" Name="IconName.CircleInfo"></SfIcon>
+                <SfAutoComplete @ref="AutoCompleteObj" TValue="string" TItem="Province" Placeholder="Province" @bind-Value="user.Province"
+                        DataSource="@Provinces" FilterType="Syncfusion.Blazor.DropDowns.FilterType.StartsWith">
+                    <AutoCompleteFieldSettings Value="Name"></AutoCompleteFieldSettings>
+                        <AutoCompleteEvents TItem="Province" TValue="string" ValueChange="@ProvinceChanged" 
+                            ></AutoCompleteEvents>
+                </SfAutoComplete>
+                </div>
         </div>
-@*         }
- *@     @* <SfFab Disabled=@requestButtonDisabled
-            CssClass="" OnClick="NewTeacherProfileRequest">Request approval</SfFab> *@
+        <div class="form-row">
+            <div class="col form-group">
+                <label class="control-label">Price per hour (€):</label>
+                <SfNumericTextBox TValue="int?" CssClass="@cssClassUsername" Placeholder="Price" @bind-Value=@user.Price Min="1">
+                    <NumericTextBoxEvents TValue="int?" Blur="PriceBlur"></NumericTextBoxEvents>
+                </SfNumericTextBox>
+                <ValidationMessage For="@(() => user.Price)"></ValidationMessage>
+            </div>
+                <div class="col form-group">
+                    <label class="control-label">Public profile:</label>
+                    <SfSwitch CssClass="e-small" Disabled=@switchDisable
+                              ValueChange="PublicProfileValueChangeHandler" TChecked="bool?" @bind-Checked="user.PublicProfile">
+                    </SfSwitch>
+                    <div class="@cssClassSwitchMessage">
+                        <InformationMessage text="Required fields must be filled for enabling public mode."></InformationMessage>
+                    </div>
+                </div>
+            </div>
     </AuthorizeView>
 </EditForm>
 <SfToast ID="do-toast" @ref="DoToastObj" CssClass="toast_template"
@@ -177,13 +158,11 @@
     private string pendingConfirmationFirstnameClass = "hide";
     private string pendingConfirmationLastnameClass = "hide";
     public ApplicationUser? user;
-    // public string firstname;
-    public string lastname;
-    public string username;
-    public string province;
-    public string speciality;
-    public bool? publicProfile;
-    public int? price;
+    // public string username;
+    // public string province;
+    // public string speciality;
+    // public bool? publicProfile;
+    // public int? price;
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; }
     [Inject]
@@ -213,15 +192,8 @@
     private bool ShowButtons { get; set; } = true;
     private string firstnamePlaceholder { get; set; } = "Enter your firstname";
     private string lastnamePlaceholder { get; set; } = "Enter your lastname";
-    // SfSwitch<bool?> PublicProfileSwitch = new SfSwitch<bool?>();
     private bool switchDisable {get; set;}
     string cssClassSwitchMessage = "hide";
-
-
-    // private void OnFocusSwitch(Microsoft.AspNetCore.Components.Web.FocusEventArgs args)
-    // {
-
-    // }
 
     protected override async Task OnInitializedAsync()
     {
@@ -230,39 +202,13 @@
         {
             user = await userManager.GetUserAsync(user2);
             editContext = new EditContext(user);
-            username = user.UserName;
-            // if (user.ApprovedFirstname == null)
-            // {
-            //     firstname = firstnamePlaceholder;
-            // }
-            // else
-            // {
-            //     firstname = user.ApprovedFirstname;
-            // }
-            // firstname = user.ApprovedFirstname;
-            // if (user.UnapprovedFirstname != null){
-            //     pendingConfirmationFirstnameClass = "show-message";
-            //     if (user.ApprovedFirstname != null)
-            //     {
-            //         cssClassFirstname = "line-through";
-            //     }
-            // }
-            // lastname = user.ApprovedLastname;
-            // if (user.UnapprovedLastname != null)
-            // {
-            //     pendingConfirmationLastnameClass = "show-message";
-            //     if (user.ApprovedLastname != null)
-            //     {
-            //         cssClassLastname = "line-through";
-            //     }
-            // }
-            province = user.Province;
-            publicProfile = user.PublicProfile;
-            speciality = user.Speciality;
-            price = user.Price;
+            // username = user.UserName;
+            // province = user.Province;
+            // publicProfile = user.PublicProfile;
+            // speciality = user.Speciality;
+            // price = user.Price;
             done = !user.PublicProfile;
             await GetUserImagePath();
-            // GetUserImagePath();
             await AreRequiredFieldsRequestFilled();
             if (areRequiredFieldsRequestFilled)
             {
@@ -308,16 +254,8 @@
     public async void FirstnameBlur(FocusOutEventArgs args)
     {
         // if (user.Firstname != null && user.Firstname != String.Empty)
-        /* if (firstname != null && firstname != String.Empty) */ /* && firstname != user.ApprovedFirstname */
         // {
-            // user.UnapprovedFirstname = firstname;
             await UpdateUserContext(user);
-            //code that changes UI (line-through in approved Value, introducing text for unapproved Value)
-            // pendingConfirmationFirstnameClass = "show-message";
-            // if (user.ApprovedFirstname != null)
-            // {
-            //     cssClassFirstname = "line-through";
-            // }
             ChangeInRequiredFieldsRequest();
             await AreRequiredFieldsRequestFilled();
             if (changeInRequiredFieldsRequest && areRequiredFieldsRequestFilled)
@@ -338,168 +276,41 @@
             {
                 cssClassSwitchMessage = "hide";
             }
-            // TeacherProfileRequest teacherProfileRequest = new TeacherProfileRequest
-            //     {
-            //         Id = Guid.NewGuid().ToString(),
-            //         UserId = user.Id,
-            //         TypeOfField = "Firstname",
-            //         UnapprovedField = user.UnapprovedFirstname,
-            //         TeacherProfileRequestDate = DateTime.Now,
-            //         TeacherProfileRequestState = "Pending"
-            //     };
-            // var path = Navigation.BaseUri + "TeacherProfileRequest/Add";
-            // var response = await Http.PostAsJsonAsync<TeacherProfileRequest>(path, teacherProfileRequest);
-            // await ProtectedLocalStorage.SetAsync("pending-teacher-profile-request", "false");
-            this.OnAfterRenderAsync(true);
-            teacherNeverPublicAlert.Refresh();
-            // teacherProfileRequestAlert.Refresh();
-            // firstname = user.ApprovedFirstname;
+            //this.OnAfterRenderAsync(true);
+            //teacherNeverPublicAlert.Refresh();
             StateHasChanged();
         // }
     }
 
-
-    // public async void FirstnameEdit(Syncfusion.Blazor.InPlaceEditor.ActionEventArgs<string> args)
-    // {
-    //     if (firstname != null && firstname != String.Empty && firstname != user.ApprovedFirstname && firstname != firstnamePlaceholder)
-    //     {
-    //         user.UnapprovedFirstname = firstname;
-    //         await UpdateUserContext(user);
-    //         //code that changes UI (line-through in approved Value, introducing text for unapproved Value)
-    //         pendingConfirmationFirstnameClass = "show-warning";
-    //         if (user.ApprovedFirstname != null)
-    //         {
-    //             cssClassFirstname = "line-through";
-    //         }
-    //         // cssClassFirstname = "line-through";
-    //         // pendingConfirmationFirstnameClass = "show-warning";
-    //         // if (firstname != user.ApprovedFirstname)
-    //         // {
-    //         //     ChangeInRequiredFieldsRequest();
-    //         // }
-    //         // await AreRequiredFieldsRequestFilled();
-    //         // if (changeInRequiredFieldsRequest && areRequiredFieldsRequestFilled)
-    //         // {
-    //         //     requestButtonDisabled = false;
-    //         // }
-    //         TeacherProfileRequest teacherProfileRequest = new TeacherProfileRequest
-    //             {
-    //                 Id = Guid.NewGuid().ToString(),
-    //                 UserId = user.Id,
-    //                 TypeOfField = "firstname",
-    //                 UnapprovedField = user.UnapprovedFirstname,
-    //                 TeacherProfileRequestDate = DateTime.Now,
-    //                 TeacherProfileRequestState = "Pending"
-    //             };
-    //         var path = Navigation.BaseUri + "TeacherProfileRequest/Add";
-    //         var response = await Http.PostAsJsonAsync<TeacherProfileRequest>(path, teacherProfileRequest);
-    //         await ProtectedLocalStorage.SetAsync("pending-teacher-profile-request", "false");
-    //         this.OnAfterRenderAsync(true);
-    //         teacherNoRequestAlert.Refresh();
-    //         teacherProfileRequestAlert.Refresh();
-    //         if (user.ApprovedFirstname == null)
-    //         {
-    //             firstname = firstnamePlaceholder;
-    //         }
-    //         else
-    //         {
-    //             firstname = user.ApprovedFirstname;
-    //         }
-    //         // firstname = user.ApprovedFirstname;
-    //         StateHasChanged();
-    //     }
-    // }
-
     public async void LastnameBlur(FocusOutEventArgs args)
     {
         if (user.Lastname != null && user.Lastname != String.Empty)
-        /* if (firstname != null && firstname != String.Empty) */ /* && firstname != user.ApprovedFirstname */
         {
-            // user.UnapprovedFirstname = firstname;
             await UpdateUserContext(user);
-            //code that changes UI (line-through in approved Value, introducing text for unapproved Value)
-            // pendingConfirmationFirstnameClass = "show-message";
-            // if (user.ApprovedFirstname != null)
+            // ChangeInRequiredFieldsRequest();
+            // await AreRequiredFieldsRequestFilled();
+            // if (changeInRequiredFieldsRequest && areRequiredFieldsRequestFilled)
             // {
-            //     cssClassFirstname = "line-through";
+            //     switchDisable = false;
             // }
-            ChangeInRequiredFieldsRequest();
-            await AreRequiredFieldsRequestFilled();
-            if (changeInRequiredFieldsRequest && areRequiredFieldsRequestFilled)
-            {
-                switchDisable = false;
-                //StateHasChanged();
-            }
-            // TeacherProfileRequest teacherProfileRequest = new TeacherProfileRequest
-            //     {
-            //         Id = Guid.NewGuid().ToString(),
-            //         UserId = user.Id,
-            //         TypeOfField = "Firstname",
-            //         UnapprovedField = user.UnapprovedFirstname,
-            //         TeacherProfileRequestDate = DateTime.Now,
-            //         TeacherProfileRequestState = "Pending"
-            //     };
-            // var path = Navigation.BaseUri + "TeacherProfileRequest/Add";
-            // var response = await Http.PostAsJsonAsync<TeacherProfileRequest>(path, teacherProfileRequest);
-            // await ProtectedLocalStorage.SetAsync("pending-teacher-profile-request", "false");
-            this.OnAfterRenderAsync(true);
-            teacherNeverPublicAlert.Refresh();
-            // teacherProfileRequestAlert.Refresh();
-            // firstname = user.ApprovedFirstname;
-            StateHasChanged();
+            // this.OnAfterRenderAsync(true);
+            // teacherNeverPublicAlert.Refresh();
+            // StateHasChanged();
         }
     }
 
-    // public void LastnameBlur(FocusOutEventArgs args)
+    // public void UsernameBlur(FocusOutEventArgs args)
     // {
     //     UpdateUserContext(user);
-    //     //StateHasChanged();
-    // }
-    public void UsernameBlur(FocusOutEventArgs args)
-    {
-        UpdateUserContext(user);
-        //StateHasChanged();
-    }
-    // public async void ProvinceBlur(FocusOutEventArgs args)
-    // {
-    //     await UpdateUserContext(user);
-    //     //await UpdateUserContext(user); this methods will be replaced by logic that adds the info to the
-    //     //request object that may be used for creating the request in the db (once I include required fields in the 
-    //     //Model of request.
-    //     if (province != user.Province) 
-    //     {
-    //         ChangeInRequiredFieldsRequest();
-    //     }
-    //     await AreRequiredFieldsRequestFilled();
-    //     if (changeInRequiredFieldsRequest && areRequiredFieldsRequestFilled)
-    //     {
-    //         requestButtonDisabled = false;
-    //     }
-    //     StateHasChanged();
-    // }
-
-    // public async void ProvinceBlur(Object args)
-    // {
-    //     await UpdateUserContext(user);
-    //     if (province != user.Province)
-    //     {
-    //         ChangeInRequiredFieldsRequest();
-    //     }
-    //     await AreRequiredFieldsRequestFilled();
-    //     if (changeInRequiredFieldsRequest && areRequiredFieldsRequestFilled)
-    //     {
-    //         requestButtonDisabled = false;
-    //     }
-    //     StateHasChanged();
     // }
 
     private async void ProvinceChanged(ChangeEventArgs<string, Province> args)
     {
         await UpdateUserContext(user);
-        if (province != user.Province)
-        {
+        // if (province != user.Province)
+        // {
             ChangeInRequiredFieldsRequest();
-        }
+        // }
         await AreRequiredFieldsRequestFilled();
         if (changeInRequiredFieldsRequest && areRequiredFieldsRequestFilled)
         {
@@ -525,10 +336,10 @@
     private async void SpecialityChanged(ChangeEventArgs<string, Speciality> args)
     {
         await UpdateUserContext(user);
-        if (speciality != user.Speciality)
-        {
+        // if (speciality != user.Speciality)
+        // {
             ChangeInRequiredFieldsRequest();
-        }
+        // }
         await AreRequiredFieldsRequestFilled();
         if (changeInRequiredFieldsRequest && areRequiredFieldsRequestFilled)
         {
@@ -554,10 +365,10 @@
     public async void PriceBlur(NumericBlurEventArgs<int?> args)
     {
         await UpdateUserContext(user);
-        if (price != user.Price)
-        {
+        // if (price != user.Price)
+        // {
             ChangeInRequiredFieldsRequest();
-        }
+        // }
         await AreRequiredFieldsRequestFilled();
         if (changeInRequiredFieldsRequest && areRequiredFieldsRequestFilled)
         {
@@ -580,35 +391,15 @@
         StateHasChanged();
     }
 
-
-    // public async void SpecialityBlur(Object args)
-    // {
-    //     await UpdateUserContext(user);
-    //     if (speciality != user.Speciality)
-    //     {
-    //         ChangeInRequiredFieldsRequest();
-    //     }
-    //     await AreRequiredFieldsRequestFilled();
-    //     if (changeInRequiredFieldsRequest && areRequiredFieldsRequestFilled)
-    //     {
-    //         requestButtonDisabled = false;
-    //     }
-    //     StateHasChanged();
-    // }
-
-    // private void BlurHandler(Object args)
-    // {
-    //     System.Diagnostics.Debug.WriteLine(AutoCompleteObj.Value);
-    // }
-
     public async void PublicProfileValueChangeHandler(Syncfusion.Blazor.Buttons.ChangeEventArgs<bool?> args)
     {
-        if(publicProfile == false || publicProfile == null)
+        if(user.PublicProfile == true)
         {
             user.EverPublicProfile = true;
         }
         await UpdateUserContext(user);
-        await ToggleDo();
+        teacherNeverPublicAlert.Refresh();
+        ToggleDo();
     }
 
     private async void ImageUploaded(Syncfusion.Blazor.Inputs.SuccessEventArgs args)
@@ -617,7 +408,6 @@
         await AreRequiredFieldsRequestFilled();
         if (changeInRequiredFieldsRequest && areRequiredFieldsRequestFilled)
         {
-            // requestButtonDisabled = false;
             switchDisable = false;
         }
         Timer timer = new Timer();
@@ -686,14 +476,6 @@
         string userIconPath = Navigation.BaseUri + "img/userIcon.png";
         userImagePath = result ? userIconPath : Navigation.BaseUri + "img/users/" + user.Id + ".jpg";
     }
-
-    // private async void GetUserImagePath()
-    // {
-    //     var path = Navigation.BaseUri + $"ImagePersonalInfo/IsUserImagePathURLNull?Id={user.Id}";
-    //     var result = await Http.GetFromJsonAsync<bool>(path);
-    //     string userIconPath = Navigation.BaseUri + "img/userIcon.png";
-    //     userImagePath = result ? userIconPath : Navigation.BaseUri + "img/users/" + user.Id + ".jpg";
-    // }
 
     async Task ToggleDo()
     {
@@ -764,8 +546,7 @@
         (user.Price == null || user.Price == 0) ||
         (user.Speciality == null || user.Speciality == String.Empty) ||
         (user.Firstname == null || user.Firstname == String.Empty) ||
-        // (user.ApprovedFirstname == null || user.UnapprovedFirstname == String.Empty) || 
-        (user.Province == null || user.Province == String.Empty)) /*(result) ||   */
+        (user.Province == null || user.Province == String.Empty))
         {
             areRequiredFieldsRequestFilled = false;
         }
