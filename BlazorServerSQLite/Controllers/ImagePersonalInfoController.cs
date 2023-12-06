@@ -66,43 +66,15 @@ namespace BlazorServerSQLite.Controllers
             bool isUserImagePathURLNull = true;
             try
             {
-                //var uploadedFileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim();
-                //var uploadedFileformat = Path.GetExtension(uploadedFileName).ToString().ToLower();
-
                 var folderName = hostingEnv.WebRootPath + "/img/users/";
-                //string[] fullPaths = { fullFolderName, userId + ".jpg" };
                 string fileName = Id + ".jpg";
-
                 DirectoryInfo dir = new DirectoryInfo(folderName);
-                //System.IO.FileInfo[] files = dir.GetFiles(userId + ".*");
-                //private Boolean ExistsFile(string filePath)
-                //{
-                //    if (File.Exists(filePath)) return true;
-                //    else return false;
-                //}
-
                 string newFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), folderName,
                     fileName);
-
                 if (System.IO.File.Exists(newFilePath))
                 {
                     isUserImagePathURLNull = false;
                 }
-
-                //    if (files.Length > 0)
-                //{
-                //    //File exists
-                //    isUserImagePathURLNull = false;
-                //    //foreach (System.IO.FileInfo file2 in files)
-                //    //{
-                //    //    System.IO.File.Delete(file2.FullName);
-                //    //}
-                //}
-                //var fullFilePath = Path.Combine(fullPaths);
-                //using (FileStream fs = System.IO.File.Create(fullFilePath))
-                //{
-                //    fs.Flush();
-                //}
             }
             catch (Exception ex) { throw; }
             return isUserImagePathURLNull;

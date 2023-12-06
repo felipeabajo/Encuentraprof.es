@@ -41,7 +41,7 @@
                                         MinFileSize="1000" MaxFileSize="5000000" AllowedExtensions=".jpg">
                                     <UploaderAsyncSettings SaveUrl="ImagePersonalInfo/Save"></UploaderAsyncSettings>
                                     <UploaderEvents Success="@ImageUploaded" BeforeRemove="@BeforeRemove" 
-                                        BeforeUpload="@BeforeUpload"></UploaderEvents> @* OnUploadStart="@UploadStart" *@
+                                        BeforeUpload="@BeforeUpload"></UploaderEvents> 
                                 </SfUploader>
                             }
                         </div>
@@ -391,13 +391,6 @@
         InvokeAsync(StateHasChanged);
     }
 
-    // private async Task UploadStart(UploadingEventArgs args)
-    // {
-    //     var path = Navigation.BaseUri + "ImagePersonalInfo/SetUserId";
-    //     var response = await Http.PostAsJsonAsync<string>(path, user.Id);
-    //     ChangeInRequiredFieldsRequest();
-    // }
-    //Uno de estos fácil que no se use. 
     private async Task BeforeUpload(BeforeUploadEventArgs args)
     {
         var path = Navigation.BaseUri + "ImagePersonalInfo/SetUserId";
@@ -419,23 +412,23 @@
         var path = Navigation.BaseUri + "Users/UpdateUser";
         var response = await Http.PostAsJsonAsync<ApplicationUser>(path, user);
     }
-    public async Task NewTeacherProfileRequest()
-    {
-        var teacherProfileRequestId = Guid.NewGuid().ToString();
-        TeacherProfileRequest teacherProfileRequest = new TeacherProfileRequest
-            {
-                Id = teacherProfileRequestId,
-                UserId = user.Id,
-                TeacherProfileRequestDate = DateTime.Now,
-                TeacherProfileRequestState = "Pending"
-            };
-        var path = Navigation.BaseUri + "TeacherProfileRequest/Add";
-        var response = await Http.PostAsJsonAsync<TeacherProfileRequest>(path, teacherProfileRequest);
-        await ProtectedLocalStorage.SetAsync("pending-teacher-profile-request", "false");
-        this.OnAfterRenderAsync(true);
-        teacherNeverPublicAlert.Refresh();
-        teacherProfileRequestAlert.Refresh();
-    }
+    // public async Task NewTeacherProfileRequest()
+    // {
+    //     var teacherProfileRequestId = Guid.NewGuid().ToString();
+    //     TeacherProfileRequest teacherProfileRequest = new TeacherProfileRequest
+    //         {
+    //             Id = teacherProfileRequestId,
+    //             UserId = user.Id,
+    //             TeacherProfileRequestDate = DateTime.Now,
+    //             TeacherProfileRequestState = "Pending"
+    //         };
+    //     var path = Navigation.BaseUri + "TeacherProfileRequest/Add";
+    //     var response = await Http.PostAsJsonAsync<TeacherProfileRequest>(path, teacherProfileRequest);
+    //     await ProtectedLocalStorage.SetAsync("pending-teacher-profile-request", "false");
+    //     this.OnAfterRenderAsync(true);
+    //     teacherNeverPublicAlert.Refresh();
+    //     teacherProfileRequestAlert.Refresh();
+    // }
 
     private async Task GetUserImagePath()
     {
@@ -510,6 +503,7 @@
     {
         var path = Navigation.BaseUri + $"ImagePersonalInfo/IsUserImagePathURLNull?Id={user.Id}";
         var result = await Http.GetFromJsonAsync<bool>(path);
+
         if ((userImagePath == Navigation.BaseUri + "img/userIcon.png") ||
         (user.Price == null || user.Price == 0) ||
         (user.Speciality == null || user.Speciality == String.Empty) ||
