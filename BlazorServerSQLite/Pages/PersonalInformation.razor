@@ -25,30 +25,34 @@
                         </span>
                     </div>
                 </div>
-            <SfDialog Target="#profile-image-section" @bind-Visible="Visibility"
-                          ShowCloseIcon="true" Width="340px" Height="400px">
-                <DialogEvents Opened="dialogOpened" Closed="dialogClosed"></DialogEvents>
-                <DialogTemplates>
-                    <Header>
-                            Upload Profile Image <SfIcon class="info-icon" id="profile-image-info-icon" Name="IconName.CircleInfo"></SfIcon>
-                    </Header>
-                    <Content>
-                        <div class="dialogContent">
-                            @if (isOpened)
-                            {
-                                <small>Supported formats: .jpg. Maximum file size: 5MB. Recommended aspect ratio: 1:1.</small>
-                                <SfUploader ID="UploadFiles" AllowMultiple="false" AutoUpload="false"
-                                        MinFileSize="1000" MaxFileSize="5000000" AllowedExtensions=".jpg">
-                                    <UploaderAsyncSettings SaveUrl="ImagePersonalInfo/Save"></UploaderAsyncSettings>
-                                    <UploaderEvents Success="@ImageUploaded" BeforeRemove="@BeforeRemove" 
-                                        BeforeUpload="@BeforeUpload"></UploaderEvents> 
-                                </SfUploader>
-                            }
-                        </div>
-                    </Content>
-                </DialogTemplates>
-            </SfDialog>
-                    </div>
+                <SfDialog Target="#profile-image-section" @bind-Visible="Visibility"
+                        ShowCloseIcon="true" Width="340px" Height="400px">
+                    <DialogEvents Opened="dialogOpened" Closed="dialogClosed"></DialogEvents>
+                    <DialogTemplates>
+                        <Header>
+                                Upload Profile Image
+                        </Header>
+                        <Content>
+                            <div class="dialogContent">
+                                @if (isOpened)
+                                {
+                                    <SfIcon Name="IconName.CircleInfo"></SfIcon>
+                                    <br/>
+                                    <small>
+                                        Profile image is required for public profiles.<br /> Supported formats: .jpg. <br /> Maximum file size: 5MB. <br /> Recommended aspect ratio: 1:1.
+                                    </small>
+                                    <SfUploader ID="UploadFiles" AllowMultiple="false" AutoUpload="false"
+                                            MinFileSize="1000" MaxFileSize="5000000" AllowedExtensions=".jpg">
+                                        <UploaderAsyncSettings SaveUrl="ImagePersonalInfo/Save"></UploaderAsyncSettings>
+                                        <UploaderEvents Success="@ImageUploaded" BeforeRemove="@BeforeRemove" 
+                                            BeforeUpload="@BeforeUpload"></UploaderEvents> 
+                                    </SfUploader>
+                                }
+                            </div>
+                        </Content>
+                    </DialogTemplates>
+                </SfDialog>
+            </div>
         </div>
     </div>
     <div class="form-row">
@@ -605,9 +609,6 @@
     }
     #speciality-info-icon:hover::after{
         content: "Speciality is required for public profiles.";
-    }
-    #profile-image-info-icon:hover::after{
-        content: "Profile image is required for public profiles.";
     }
     #price-info-icon:hover::after{
         content: "Price per hour is required for public profiles."
