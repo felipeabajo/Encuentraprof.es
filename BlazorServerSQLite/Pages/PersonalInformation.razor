@@ -88,7 +88,7 @@
         <div class="form-row">
             <div class="col form-group">
                 <label class="control-label">Price per hour (€):</label>
-                <SfIcon class="info-icon" id="province-info-icon" Name="IconName.CircleInfo"></SfIcon>
+                <SfIcon class="info-icon" id="price-info-icon" Name="IconName.CircleInfo"></SfIcon>
                 <SfNumericTextBox TValue="int?" CssClass="@cssClassUsername" Placeholder="Price" @bind-Value=@user.Price Min="1">
                     <NumericTextBoxEvents TValue="int?" Blur="PriceBlur"></NumericTextBoxEvents>
                 </SfNumericTextBox>
@@ -608,6 +608,9 @@
     }
     #profile-image-info-icon:hover::after{
         content: "Profile image is required for public profiles.";
+    }
+    #price-info-icon:hover::after{
+        content: "Price per hour is required for public profiles."
     }
     /*Start CSS for Toast*/
     .action-span {
