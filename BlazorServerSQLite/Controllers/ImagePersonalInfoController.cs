@@ -61,23 +61,5 @@ namespace BlazorServerSQLite.Controllers
             }
             catch (Exception ex) { throw; }
         }
-        public bool IsUserImagePathURLNull (string Id)
-        {
-            bool isUserImagePathURLNull = true;
-            try
-            {
-                var folderName = hostingEnv.WebRootPath + "/img/users/";
-                string fileName = Id + ".jpg";
-                DirectoryInfo dir = new DirectoryInfo(folderName);
-                string newFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), folderName,
-                    fileName);
-                if (System.IO.File.Exists(newFilePath))
-                {
-                    isUserImagePathURLNull = false;
-                }
-            }
-            catch (Exception ex) { throw; }
-            return isUserImagePathURLNull;
-        }
     }
 }
