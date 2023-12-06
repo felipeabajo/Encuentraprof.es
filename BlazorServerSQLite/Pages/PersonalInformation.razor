@@ -67,31 +67,25 @@
     </div>
     <AuthorizeView Roles="Teacher" Context="teacherContext">
         <div class="form-row">
-    @*         <div class="col form-group">
-                <label class="control-label">Username:</label>
-                <SfTextBox CssClass="@cssClassUsername" Placeholder="Username"
-                            @bind-Value=@user.UserName Blur="UsernameBlur"></SfTextBox>
-                <ValidationMessage For="@(() => user.UserName)"></ValidationMessage>
-            </div> *@
-                <div class="col form-group">
-                    <label class="control-label">Speciality:</label>
-                    <SfIcon class="info-icon" id="speciality-info-icon" Name="IconName.CircleInfo"></SfIcon>
-                    <SfAutoComplete @ref="AutoCompleteObj1" TValue="string" TItem="Speciality" Placeholder="Speciality" @bind-Value="user.Speciality"
-                                    DataSource="@Specialities" FilterType="Syncfusion.Blazor.DropDowns.FilterType.StartsWith">
-                        <AutoCompleteFieldSettings Value="Name"></AutoCompleteFieldSettings>
-                        <AutoCompleteEvents TItem="Speciality" TValue="string" ValueChange="@SpecialityChanged"></AutoCompleteEvents>
-                    </SfAutoComplete>
-                </div>
-                <div class="col form-group">
-                    <label class="control-label">Province:</label>
-                <SfIcon class="info-icon" id="province-info-icon" Name="IconName.CircleInfo"></SfIcon>
-                <SfAutoComplete @ref="AutoCompleteObj" TValue="string" TItem="Province" Placeholder="Province" @bind-Value="user.Province"
-                        DataSource="@Provinces" FilterType="Syncfusion.Blazor.DropDowns.FilterType.StartsWith">
+            <div class="col form-group">
+                <label class="control-label">Speciality:</label>
+                <SfIcon class="info-icon" id="speciality-info-icon" Name="IconName.CircleInfo"></SfIcon>
+                <SfAutoComplete @ref="AutoCompleteObj1" TValue="string" TItem="Speciality" Placeholder="Speciality" @bind-Value="user.Speciality"
+                                DataSource="@Specialities" FilterType="Syncfusion.Blazor.DropDowns.FilterType.StartsWith">
                     <AutoCompleteFieldSettings Value="Name"></AutoCompleteFieldSettings>
-                        <AutoCompleteEvents TItem="Province" TValue="string" ValueChange="@ProvinceChanged" 
-                            ></AutoCompleteEvents>
+                    <AutoCompleteEvents TItem="Speciality" TValue="string" ValueChange="@SpecialityChanged"></AutoCompleteEvents>
                 </SfAutoComplete>
-                </div>
+            </div>
+            <div class="col form-group">
+                <label class="control-label">Province:</label>
+            <SfIcon class="info-icon" id="province-info-icon" Name="IconName.CircleInfo"></SfIcon>
+            <SfAutoComplete @ref="AutoCompleteObj" TValue="string" TItem="Province" Placeholder="Province" @bind-Value="user.Province"
+                    DataSource="@Provinces" FilterType="Syncfusion.Blazor.DropDowns.FilterType.StartsWith">
+                <AutoCompleteFieldSettings Value="Name"></AutoCompleteFieldSettings>
+                    <AutoCompleteEvents TItem="Province" TValue="string" ValueChange="@ProvinceChanged" 
+                        ></AutoCompleteEvents>
+            </SfAutoComplete>
+            </div>
         </div>
         <div class="form-row">
             <div class="col form-group">
@@ -158,11 +152,6 @@
     private string pendingConfirmationFirstnameClass = "hide";
     private string pendingConfirmationLastnameClass = "hide";
     public ApplicationUser? user;
-    // public string username;
-    // public string province;
-    // public string speciality;
-    // public bool? publicProfile;
-    // public int? price;
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; }
     [Inject]
@@ -202,11 +191,6 @@
         {
             user = await userManager.GetUserAsync(user2);
             editContext = new EditContext(user);
-            // username = user.UserName;
-            // province = user.Province;
-            // publicProfile = user.PublicProfile;
-            // speciality = user.Speciality;
-            // price = user.Price;
             done = !user.PublicProfile;
             await GetUserImagePath();
             await AreRequiredFieldsRequestFilled();
@@ -276,8 +260,6 @@
             {
                 cssClassSwitchMessage = "hide";
             }
-            //this.OnAfterRenderAsync(true);
-            //teacherNeverPublicAlert.Refresh();
             StateHasChanged();
         // }
     }
@@ -287,30 +269,13 @@
         if (user.Lastname != null && user.Lastname != String.Empty)
         {
             await UpdateUserContext(user);
-            // ChangeInRequiredFieldsRequest();
-            // await AreRequiredFieldsRequestFilled();
-            // if (changeInRequiredFieldsRequest && areRequiredFieldsRequestFilled)
-            // {
-            //     switchDisable = false;
-            // }
-            // this.OnAfterRenderAsync(true);
-            // teacherNeverPublicAlert.Refresh();
-            // StateHasChanged();
         }
     }
-
-    // public void UsernameBlur(FocusOutEventArgs args)
-    // {
-    //     UpdateUserContext(user);
-    // }
 
     private async void ProvinceChanged(ChangeEventArgs<string, Province> args)
     {
         await UpdateUserContext(user);
-        // if (province != user.Province)
-        // {
-            ChangeInRequiredFieldsRequest();
-        // }
+        ChangeInRequiredFieldsRequest();
         await AreRequiredFieldsRequestFilled();
         if (changeInRequiredFieldsRequest && areRequiredFieldsRequestFilled)
         {
@@ -336,10 +301,7 @@
     private async void SpecialityChanged(ChangeEventArgs<string, Speciality> args)
     {
         await UpdateUserContext(user);
-        // if (speciality != user.Speciality)
-        // {
-            ChangeInRequiredFieldsRequest();
-        // }
+        ChangeInRequiredFieldsRequest();
         await AreRequiredFieldsRequestFilled();
         if (changeInRequiredFieldsRequest && areRequiredFieldsRequestFilled)
         {
@@ -365,10 +327,7 @@
     public async void PriceBlur(NumericBlurEventArgs<int?> args)
     {
         await UpdateUserContext(user);
-        // if (price != user.Price)
-        // {
-            ChangeInRequiredFieldsRequest();
-        // }
+        ChangeInRequiredFieldsRequest();
         await AreRequiredFieldsRequestFilled();
         if (changeInRequiredFieldsRequest && areRequiredFieldsRequestFilled)
         {
@@ -404,17 +363,33 @@
 
     private async void ImageUploaded(Syncfusion.Blazor.Inputs.SuccessEventArgs args)
     {
+        Timer timer = new Timer();
+        timer.Interval = TimeSpan.FromSeconds(2).TotalMilliseconds;
+        timer.Elapsed += OnTimedEvent;
+        timer.Enabled = true;
+        timer.AutoReset = false;
+        await GetUserImagePath();
         ChangeInRequiredFieldsRequest();
         await AreRequiredFieldsRequestFilled();
         if (changeInRequiredFieldsRequest && areRequiredFieldsRequestFilled)
         {
             switchDisable = false;
         }
-        Timer timer = new Timer();
-        timer.Interval = TimeSpan.FromSeconds(2).TotalMilliseconds;
-        timer.Elapsed += OnTimedEvent;
-        timer.Enabled = true;
-        timer.AutoReset = false;
+        // else
+        // {
+        //     user.PublicProfile = false;
+        //     await UpdateUserContext(user);
+        //     switchDisable = true;
+        // }
+        if (switchDisable)
+        {
+            cssClassSwitchMessage = "show-message";
+        }
+        else
+        {
+            cssClassSwitchMessage = "hide";
+        }
+        StateHasChanged();
     }
 
     private void OnTimedEvent(Object source, System.Timers.ElapsedEventArgs e)
