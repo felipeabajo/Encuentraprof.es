@@ -3,3 +3,4 @@
 3. Clean-up in PersonalInformation: remove commented code, remove username,remove functionality other than updating user for lastname, remove call this.OnAfterRenderAsync(true) for firstname and lastname, remove teacherNeverPublicAlert.Refresh(); in every reference except PublicProfileValueChangeHandler. Change alignment of formfields.
 4. Clean-up comments. Catch up implementation in Image.
 5. Remove UploadStart Event for Setting userId (done with BeforeUpload).
+6. Clean-up IsUserImagePathURLNull in ImagePersonalController. Comment references to requests in PersonalInformation.
