@@ -165,8 +165,8 @@
     private bool isDoToastShown { get; set; }
     private bool isUndoToastShown { get; set; }
     private bool? done = false;
-    private bool changeInRequiredFieldsRequest = false;
-    private bool areRequiredFieldsRequestFilled { get; set; }
+    private bool changeInRequiredFields = false;
+    private bool areRequiredFieldsFilled { get; set; }
     private bool requestButtonDisabled = true;
     private bool Visibility { get; set; } = false;
     private bool isOpened { get; set; }
@@ -192,8 +192,8 @@
             editContext = new EditContext(user);
             done = !user.PublicProfile;
             await GetUserImagePath();
-            await AreRequiredFieldsRequestFilled();
-            if (areRequiredFieldsRequestFilled)
+            await AreRequiredFieldsFilled();
+            if (areRequiredFieldsFilled)
             {
                 switchDisable = false;
             }
@@ -239,9 +239,9 @@
         // if (user.Firstname != null && user.Firstname != String.Empty)
         // {
             await UpdateUserContext(user);
-            ChangeInRequiredFieldsRequest();
-            await AreRequiredFieldsRequestFilled();
-            if (changeInRequiredFieldsRequest && areRequiredFieldsRequestFilled)
+            ChangeInRequiredFields();
+            await AreRequiredFieldsFilled();
+            if (changeInRequiredFields && areRequiredFieldsFilled)
             {
                 switchDisable = false;
             }
@@ -274,9 +274,9 @@
     private async void ProvinceChanged(ChangeEventArgs<string, Province> args)
     {
         await UpdateUserContext(user);
-        ChangeInRequiredFieldsRequest();
-        await AreRequiredFieldsRequestFilled();
-        if (changeInRequiredFieldsRequest && areRequiredFieldsRequestFilled)
+        ChangeInRequiredFields();
+        await AreRequiredFieldsFilled();
+        if (changeInRequiredFields && areRequiredFieldsFilled)
         {
             switchDisable = false;
         }
@@ -300,9 +300,9 @@
     private async void SpecialityChanged(ChangeEventArgs<string, Speciality> args)
     {
         await UpdateUserContext(user);
-        ChangeInRequiredFieldsRequest();
-        await AreRequiredFieldsRequestFilled();
-        if (changeInRequiredFieldsRequest && areRequiredFieldsRequestFilled)
+        ChangeInRequiredFields();
+        await AreRequiredFieldsFilled();
+        if (changeInRequiredFields && areRequiredFieldsFilled)
         {
             switchDisable = false;
         }
@@ -326,9 +326,9 @@
     public async void PriceBlur(NumericBlurEventArgs<int?> args)
     {
         await UpdateUserContext(user);
-        ChangeInRequiredFieldsRequest();
-        await AreRequiredFieldsRequestFilled();
-        if (changeInRequiredFieldsRequest && areRequiredFieldsRequestFilled)
+        ChangeInRequiredFields();
+        await AreRequiredFieldsFilled();
+        if (changeInRequiredFields && areRequiredFieldsFilled)
         {
             switchDisable = false;
         }
@@ -368,9 +368,9 @@
         timer.Enabled = true;
         timer.AutoReset = false;
         await GetUserImagePath();
-        ChangeInRequiredFieldsRequest();
-        await AreRequiredFieldsRequestFilled();
-        if (changeInRequiredFieldsRequest && areRequiredFieldsRequestFilled)
+        ChangeInRequiredFields();
+        await AreRequiredFieldsFilled();
+        if (changeInRequiredFields && areRequiredFieldsFilled)
         {
             switchDisable = false;
         }
@@ -395,7 +395,7 @@
     {
         var path = Navigation.BaseUri + "ImagePersonalInfo/SetUserId";
         var response = await Http.PostAsJsonAsync<string>(path, user.Id);
-        ChangeInRequiredFieldsRequest();
+        ChangeInRequiredFields();
     }
 
     private void BeforeRemove(BeforeRemoveEventArgs args)
@@ -478,11 +478,11 @@
         await this.UndoToastObj.HideAsync();
         isUndoToastShown = false;
     }
-    private void ChangeInRequiredFieldsRequest()
+    private void ChangeInRequiredFields()
     {
-        changeInRequiredFieldsRequest = true;
+        changeInRequiredFields = true;
     }
-    private async Task AreRequiredFieldsRequestFilled()
+    private async Task AreRequiredFieldsFilled()
     {
         if ((userImagePath == Navigation.BaseUri + "img/userIcon.png") ||
         (user.Price == null || user.Price == 0) ||
@@ -490,11 +490,11 @@
         (user.Firstname == null || user.Firstname == String.Empty) ||
         (user.Province == null || user.Province == String.Empty))
         {
-            areRequiredFieldsRequestFilled = false;
+            areRequiredFieldsFilled = false;
         }
         else
         {
-            areRequiredFieldsRequestFilled = true;
+            areRequiredFieldsFilled = true;
         }
     }
 
