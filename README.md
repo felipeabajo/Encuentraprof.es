@@ -7,3 +7,4 @@
 7. Change name of changeInRequiredFields and areRequiredFieldsFilled for variable and methods.
 8. Restore IsUserImagePathURLNull method in ImagePersonalController (since in reality it's used).
 9. Info icon por price per hour.
+10. Check behaviour when a user removes information from Personal Information. There're probably better UX than this, but for now, it's allowed to remove it, making sure that if the fields are empty, behaviouris as null. Check no longer happening: problem with firstname Field on Edge only, that when focus out (spotted when focused via mouse), it appears a strange shadow. I think it has to do with the box with the suggestions.
