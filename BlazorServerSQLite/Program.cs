@@ -34,6 +34,8 @@ builder.Services.AddServerSideBlazor().AddHubOptions(o =>
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
 builder.Services.AddSingleton<MyStateContainer>();
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
+
+
 builder.Services.AddSingleton<IEmailSenderService, EmailSenderService>();
 builder.Services.AddControllers();
 builder.Services.AddSyncfusionBlazor();

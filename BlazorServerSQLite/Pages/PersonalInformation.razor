@@ -104,7 +104,10 @@
                               ValueChange="PublicProfileValueChangeHandler" TChecked="bool?" @bind-Checked="user.PublicProfile">
                     </SfSwitch>
                     <div class="@cssClassSwitchMessage">
-                        <InformationMessage text="Required fields must be filled for enabling public mode."></InformationMessage>
+@*                         <InformationMessage text="Required fields must be filled for enabling public mode."></InformationMessage>
+ *@                     <SfMessage>
+                            Required fields must be filled for enabling public mode.
+                        </SfMessage>
                     </div>
                 </div>
             </div>
