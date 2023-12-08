@@ -10,7 +10,7 @@
         <div class="form-row">
             <div class="col form-group">
                 <label class="control-label">Email:</label>
-                <SfTextBox Placeholder="Email"
+                <SfTextBox Placeholder="Email" Blur="FieldBlur"
                 @bind-Value=@mailRequest.ToEmail></SfTextBox>
                 <ValidationMessage For="@(() => mailRequest.ToEmail)"></ValidationMessage>
             </div>
@@ -18,7 +18,7 @@
         <div class="form-row">
             <div class="col form-group">
                 <label class="control-label">Subject:</label>
-                <SfTextBox Placeholder="Subject"
+                <SfTextBox Placeholder="Subject" Blur="FieldBlur"
                 @bind-Value=@mailRequest.Subject></SfTextBox>
                 <ValidationMessage For="@(() => mailRequest.Subject)"></ValidationMessage>
             </div>
@@ -26,12 +26,13 @@
         <div class="form-row">
             <div class="col form-group">
                 <label class="control-label">Body:</label>
-                <SfTextBox Placeholder="Body" Multiline="true"
+                <SfTextBox Placeholder="Body" Multiline="true" Blur="FieldBlur"
                 @bind-Value=@mailRequest.Body></SfTextBox>
                 <ValidationMessage For="@(() => mailRequest.Body)"></ValidationMessage>
             </div>
         </div>
-        <SfButton OnClick="SendMail" Content="Send"></SfButton>
+        <SfButton OnClick="SendMail" Content="Send" Disabled=@sendButtonDisable></SfButton>
+        <DataAnnotationsValidator/>
     </EditForm>
 </div>
 <div class="@cssClassSentMessage">
@@ -57,7 +58,9 @@
     MailRequest mailRequest = new MailRequest();
     ApplicationUser? user;
     private bool emailSent = false;
-    string cssClassSentMessage = "hide";
+    string cssClassSentMessage = "hide-message";
+    private bool sendButtonDisable = true;
+    private bool areRequiredFieldsFilled = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -77,14 +80,34 @@
             cssClassSentMessage = "show-message";
             StateHasChanged();
         }
-    } 
-}
-<style>
-    .hide {
-        display: none;
     }
 
-    .show-message {
-        max-width: fit-content;
+    private async Task AreRequiredFieldsFilled()
+    {
+        if ((mailRequest.ToEmail == null || mailRequest.ToEmail == String.Empty) ||
+        (mailRequest.Subject == null || mailRequest.Subject == String.Empty) ||
+        (mailRequest.Body == null || mailRequest.Body == String.Empty))
+        {
+            areRequiredFieldsFilled = false;
+        }
+        else
+        {
+            areRequiredFieldsFilled = true;
+        }
     }
-</style>
+
+    public async void FieldBlur(FocusOutEventArgs args)
+    {
+        await AreRequiredFieldsFilled();
+        if (areRequiredFieldsFilled)
+        {
+            sendButtonDisable = false;
+        }
+        else
+        {
+            sendButtonDisable = true;
+        }
+    }
+
+
+}

@@ -3,6 +3,7 @@ using System;
 using BlazorServerSQLite.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlazorServerSQLite.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231208162247_DataTypeEmailAddressAnnotationMailRequest")]
+    partial class DataTypeEmailAddressAnnotationMailRequest
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.14");
@@ -160,22 +163,22 @@ namespace BlazorServerSQLite.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "b17fa9ef-5a99-4771-a641-ec55985f2f02",
-                            ConcurrencyStamp = "1a35e41e-87fa-4820-8df6-e33b4b457cf9",
+                            Id = "201b8fea-9d6d-4823-88b9-5e75ffd5a6cf",
+                            ConcurrencyStamp = "703f116b-7fbd-4dd5-ba0c-56a2051857fb",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "9e881a25-1315-4ed9-9fe1-bc68fa3420d1",
-                            ConcurrencyStamp = "5c962c45-56b6-41ff-9c0f-48eb16010238",
+                            Id = "cb20d7b1-65ea-43fc-aa30-4872ce8d7131",
+                            ConcurrencyStamp = "799b0738-89f6-4fb0-bac4-ede3effdbd49",
                             Name = "Teacher",
                             NormalizedName = "TEACHER"
                         },
                         new
                         {
-                            Id = "d2ee27e8-ec99-48e2-bab7-6c8c8f3ab196",
-                            ConcurrencyStamp = "f3664cd2-b1f3-4143-8edc-4e67de81613a",
+                            Id = "ba13248d-6db0-4d62-b751-7df469b38a81",
+                            ConcurrencyStamp = "9563e3a7-6556-4aed-a733-bba1f6c78789",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         });

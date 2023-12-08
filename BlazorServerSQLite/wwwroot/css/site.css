@@ -56,6 +56,15 @@
     font-style: italic;
 }
 
+/*Messages visibility*/
+.hide-message {
+    display: none;
+}
+
+.show-message {
+    max-width: fit-content;
+}
+
 /*User Cards*/
 .user-card {
     margin: 1em 0;

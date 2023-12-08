@@ -155,8 +155,8 @@
     private string cssClassLastname;
     private string cssClassUsername;
     private string cssClassProvince;
-    private string pendingConfirmationFirstnameClass = "hide";
-    private string pendingConfirmationLastnameClass = "hide";
+    // private string pendingConfirmationFirstnameClass = "hide";
+    // private string pendingConfirmationLastnameClass = "hide";
     public ApplicationUser? user;
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; }
@@ -188,7 +188,7 @@
     private string firstnamePlaceholder { get; set; } = "Enter your firstname";
     private string lastnamePlaceholder { get; set; } = "Enter your lastname";
     private bool switchDisable {get; set;}
-    string cssClassSwitchMessage = "hide";
+    string cssClassSwitchMessage = "hide-message";
 
     protected override async Task OnInitializedAsync()
     {
@@ -216,7 +216,7 @@
             }
             else
             {
-                cssClassSwitchMessage = "hide";
+                cssClassSwitchMessage = "hide-message";
             }
         }
     }
@@ -264,7 +264,7 @@
             }
             else
             {
-                cssClassSwitchMessage = "hide";
+                cssClassSwitchMessage = "hide-message";
             }
             StateHasChanged();
         // }
@@ -299,7 +299,7 @@
         }
         else
         {
-            cssClassSwitchMessage = "hide";
+            cssClassSwitchMessage = "hide-message";
         }
         StateHasChanged();
     }
@@ -325,7 +325,7 @@
         }
         else
         {
-            cssClassSwitchMessage = "hide";
+            cssClassSwitchMessage = "hide-message";
         }
         StateHasChanged();
     }
@@ -351,7 +351,7 @@
         }
         else
         {
-            cssClassSwitchMessage = "hide";
+            cssClassSwitchMessage = "hide-message";
         }
         StateHasChanged();
     }
@@ -387,7 +387,7 @@
         }
         else
         {
-            cssClassSwitchMessage = "hide";
+            cssClassSwitchMessage = "hide-message";
         }
         StateHasChanged();
     }
@@ -986,12 +986,6 @@
 
     .line-through, .line-through .e-editable-value { /* .line-through .e-textbox  */
         text-decoration-line: line-through;
-    }
-    .hide{
-        display: none;
-    }
-    .show-message{
-        max-width: fit-content;
     }
     .e-editable-form {
         display: flex;
