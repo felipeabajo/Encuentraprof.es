@@ -27,7 +27,8 @@ namespace BlazorServerSQLite.Services
                 {
                     await client.ConnectAsync(_smtpSettings.Server);
                     await client.AuthenticateAsync(_smtpSettings.UserName, _smtpSettings.Password);
-                    await client.SendAsync(message);
+                    await client.SendAsync(message); 
+                    //If the address does not exist, an exception is thrown at this point.
                     await client.DisconnectAsync(true);
                 }
             }

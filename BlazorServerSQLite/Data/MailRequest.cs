@@ -1,4 +1,6 @@
-﻿namespace BlazorServerSQLite.Data
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace BlazorServerSQLite.Data
 {
     public class MailRequest
     {

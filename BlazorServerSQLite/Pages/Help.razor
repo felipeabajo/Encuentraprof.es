@@ -24,13 +24,18 @@
             </div>
         </div>
         <div class="form-row">
-            <label class="control-label">Body:</label>
-            <SfTextBox Placeholder="Body" Multiline="true"
-            @bind-Value=@mailRequest.Body></SfTextBox>
-            <ValidationMessage For="@(() => mailRequest.Body)"></ValidationMessage>
+            <div class="col form-group">
+                <label class="control-label">Body:</label>
+                <SfTextBox Placeholder="Body" Multiline="true"
+                @bind-Value=@mailRequest.Body></SfTextBox>
+                <ValidationMessage For="@(() => mailRequest.Body)"></ValidationMessage>
+            </div>
         </div>
         <SfButton OnClick="SendMail" Content="Send"></SfButton>
     </EditForm>
+</div>
+<div class="@cssClassSentMessage">
+    <InformationMessage text="Your message has been sent. You will hear from us soon."></InformationMessage>
 </div>
 <div class="row">
     <div class="col">
@@ -51,25 +56,35 @@
     UserManager<ApplicationUser> userManager { get; set; }
     MailRequest mailRequest = new MailRequest();
     ApplicationUser? user;
+    private bool emailSent = false;
+    string cssClassSentMessage = "hide";
 
-    // protected override async Task OnInitializedAsync()
-    // {
-    // }
     protected override async Task OnInitializedAsync()
     {
-        // var user2 = (await authenticationStateTask).User;
-        // if (user2.Identity.IsAuthenticated)
-        // {
-        //     user = await userManager.GetUserAsync(user2);
-        // }
         editContext = new EditContext(mailRequest);
     }
-    private void SendMail()
+    // private void SendMail()
+    // {
+    //     EmailSenderService.SendEmailAsync(mailRequest);
+    // } //This point is reached even when the address does not exist because is reached before executing SendEmailAsync
+
+    private async void SendMail()
     {
-        //string BodyBuild = "<a href=" + mailRequest.Body + ">Enlace</a>";
-        // mailRequest.ToEmail = user.Email;
-        // mailRequest.Subject = "New lessons request";
-        //mailRequest.Body = BodyBuild;
-        EmailSenderService.SendEmailAsync(mailRequest);
-    }
+        await EmailSenderService.SendEmailAsync(mailRequest);
+        emailSent = true;
+        if (emailSent)
+        {
+            cssClassSentMessage = "show-message";
+            StateHasChanged();
+        }
+    } 
 }
+<style>
+    .hide {
+        display: none;
+    }
+
+    .show-message {
+        max-width: fit-content;
+    }
+</style>
