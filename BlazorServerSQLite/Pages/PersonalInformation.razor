@@ -104,8 +104,7 @@
                               ValueChange="PublicProfileValueChangeHandler" TChecked="bool?" @bind-Checked="user.PublicProfile">
                     </SfSwitch>
                     <div class="@cssClassSwitchMessage">
-@*                         <InformationMessage text="Required fields must be filled for enabling public mode."></InformationMessage>
- *@                     <SfMessage>
+                        <SfMessage Severity="MessageSeverity.Info">
                             Required fields must be filled for enabling public mode.
                         </SfMessage>
                     </div>
@@ -155,8 +154,6 @@
     private string cssClassLastname;
     private string cssClassUsername;
     private string cssClassProvince;
-    // private string pendingConfirmationFirstnameClass = "hide";
-    // private string pendingConfirmationLastnameClass = "hide";
     public ApplicationUser? user;
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; }
@@ -166,7 +163,6 @@
     public TeacherProfileRequest? teacherProfileRequest;
     bool teacherNoRequests { get; set; }
     TeacherNeverPublicAlert teacherNeverPublicAlert = new TeacherNeverPublicAlert();
-    TeacherProfileRequestAlert teacherProfileRequestAlert = new TeacherProfileRequestAlert();
     SfToast DoToastObj;
     SfToast UndoToastObj;
     private bool isDoToastShown { get; set; }

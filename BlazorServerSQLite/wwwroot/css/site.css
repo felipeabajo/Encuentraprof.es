@@ -60,9 +60,11 @@
 .hide-message {
     display: none;
 }
-
 .show-message {
     max-width: fit-content;
+}
+.show-message-block {
+    display: block !important;
 }
 
 /*User Cards*/

@@ -3,13 +3,12 @@
 @inject NavigationManager Navigation
 @inject ProtectedLocalStorage ProtectedLocalStorage
 
-<div class="@cssClass" style="display:none;">
-    <WarningMessage name="@name" text="Your profile has never been public. Firstname, speciality, price (hour), province and profile image
+<div class="@cssClass">
+    <SfMessage Closed="CloseNeverPublicAlert" Severity="MessageSeverity.Warning" ShowCloseIcon="true">
+        Your profile has never been public. Firstname, speciality, price (hour), province and profile image
         are required for public profiles. Once you enter this information you will be able to make your profile public by using the
-        toggle button NEW LOCATION FOR SWITCH."></WarningMessage>
-@*     There are some required fields for profiles to get approved: firstname, speciality, price (hour) and province. Once you enter this
-    information, the request button will be enabled and you will be able to request approval of your
-    profile. *@
+        toggle button NEW LOCATION FOR SWITCH.
+    </SfMessage>
 </div>
 
 @code {
@@ -18,11 +17,9 @@
     [Inject]
     UserManager<ApplicationUser> userManager { get; set; }
     public ApplicationUser? user;
-    public TeacherProfileRequest? teacherProfileRequest;
-    public List<TeacherProfileRequest> teacherProfileRequests;
-    string cssClass = String.Empty;
+    string cssClass = "hide-message alert m-0 p-0";
     bool cookieRead { get; set; }
-    string name = "teacher-no-requests";
+    string name = "CloseNeverPublicAlert";
 
     protected override async Task OnInitializedAsync()
     {
@@ -38,19 +35,20 @@
     {
         if (firstRender)
         {
-            await LoadRequests();
             cookieRead = await SetCookieRead();
-            //bool teacherNoRequests = teacherProfileRequest == null ? true : false;
-            cssClass = "alert m-0 p-0";
-            //if (teacherNoRequests)
             if (user.EverPublicProfile == false || user.EverPublicProfile == null)
             {
                 if (!cookieRead)
                 {
-                    cssClass = "show alert m-0 p-0";
+                    cssClass = "show-message-block alert m-0 p-0";
                     StateHasChanged();
                     Refresh();
                 }
+            }
+            else
+            {
+                cssClass = "hide-message alert m-0 p-0";
+                StateHasChanged();
             }
         }
     }
@@ -78,24 +76,15 @@
         return cookieRead;
     }
 
-    async Task LoadRequests()
-    {
-        var path = Navigation.BaseUri + $"TeacherProfileRequest/GetOneTeacherProfileRequestByTeacherId?Id={user.Id}";
-        var result = await Http.GetFromJsonAsync<TeacherProfileRequest>(path);
-        if (result.Id != null)
-        {
-            teacherProfileRequest = result;
-        }
-    }
     public async void Refresh()
     {
         await OnAfterRenderAsync(true);
         StateHasChanged();
     }
-}
 
-<style>
-    .show {
-        display: block !important;
+    public async void CloseNeverPublicAlert()
+    {
+        await ProtectedLocalStorage.SetAsync(name, "true");
+        StateHasChanged();
     }
-</style>
+}
