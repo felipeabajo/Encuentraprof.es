@@ -16,3 +16,4 @@ account and received 12 months of free services.) I start here: https://learn.mi
 it does not show anything, either with or without applying Migration. 
 I try also including [DataType(DataType.EmailAddress)] and [EmailAddress (ErrorMessage = "Invalid email address")]. None of them work.  Fxck. It was because of DataAnnotationsValidator. I am not sure whether migration is required or not, just in case, I apply it. The behaviour is strange, it seems that the message it only appears when the user types and then deletes. Change hide class for hide-message and moved to site.css. Functionality for enabling/disabling Send button added. Add required constraint to every field of MailRequest.
 15. InformationMessage and WarningMessage removed since they are not working properly (Enter key input on AutoComplete makes them disappear). TeacherProfileRequestAlert removed. TeacherProfileRequest functionality removed.
+16. Review everything that is not used in PersonalInformation.
