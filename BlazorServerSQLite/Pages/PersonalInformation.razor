@@ -350,7 +350,7 @@
         }
         await UpdateUserContext(user);
         teacherNeverPublicAlert.Refresh();
-        ToggleDo();
+        await ToggleDo();
     }
 
     private async void ImageUploaded(Syncfusion.Blazor.Inputs.SuccessEventArgs args)
@@ -420,18 +420,18 @@
         {
             if (isUndoToastShown)
             {
-                HideDoToast();
-                HideUndoToast();
+                await HideDoToast();
+                await HideUndoToast();
             }
-            Do();
+            await Do();
         }
         if (done == true)
         {
             if (isDoToastShown)
             {
-                HideDoToast();
+                await HideDoToast();
             }
-            Undo();
+            await Undo();
         }
         done = !done;
     }
@@ -440,7 +440,7 @@
     {
         if (!isDoToastShown)
         {
-            ShowDoToast();
+            await ShowDoToast();
         }
     }
 
@@ -448,7 +448,7 @@
     {
         if (!isUndoToastShown)
         {
-            ShowUndoToast();
+            await ShowUndoToast();
         }
     }
     private async Task ShowDoToast()

@@ -25,6 +25,5 @@ namespace BlazorServerSQLite.Data
         [Range(0,Double.PositiveInfinity)]
         public int? Price { get; set; }
         public bool? EverPublicProfile { get; set; }
-
     }
 }
