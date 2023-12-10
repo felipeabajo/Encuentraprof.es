@@ -21,4 +21,5 @@ I try also including [DataType(DataType.EmailAddress)] and [EmailAddress (ErrorM
 18. Required added also to Province, Speciality and Price. The only problem (little) that I see has to do with the range of numbers. Even though I put 0 in Register.cshtml.cs automatically gets 1 as a value. I change it to 1 and continue.
 19. Fix every await that is suggested in Personal Information. Error about [Required] implementation. Add-Migration and it seems to be fixed.
 20. Improve system for gathering Provinces and Specialities. Requirements: provinces and specialities available for editing Personal Information and also for searching teachers. Solution: (simplest I can figure out) put that info into separate classes, using public static list for gathering elements.
-21. Province and Speciality refered to common classes in Teacher Search page. 
+21. Province and Speciality refered to common classes in Teacher Search page.
+22. Comments removed from Teacher Search page.
