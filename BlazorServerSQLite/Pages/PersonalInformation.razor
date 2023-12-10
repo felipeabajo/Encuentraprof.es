@@ -72,7 +72,7 @@
             <div class="col form-group">
                 <label class="control-label">Speciality:</label>
                 <SfIcon class="info-icon" id="speciality-info-icon" Name="IconName.CircleInfo"></SfIcon>
-                <SfAutoComplete @ref="AutoCompleteObj1" TValue="string" TItem="Speciality" Placeholder="Speciality" @bind-Value="user.Speciality"
+                <SfAutoComplete @ref="AutoCompleteObj1" TValue="string" TItem="Speciality" Placeholder="@specialityPlaceholder" @bind-Value="user.Speciality"
                                 DataSource="@Specialities" FilterType="Syncfusion.Blazor.DropDowns.FilterType.StartsWith">
                     <AutoCompleteFieldSettings Value="Name"></AutoCompleteFieldSettings>
                     <AutoCompleteEvents TItem="Speciality" TValue="string" ValueChange="@SpecialityChanged"></AutoCompleteEvents>
@@ -81,7 +81,7 @@
             <div class="col form-group">
                 <label class="control-label">Province:</label>
             <SfIcon class="info-icon" id="province-info-icon" Name="IconName.CircleInfo"></SfIcon>
-            <SfAutoComplete @ref="AutoCompleteObj" TValue="string" TItem="Province" Placeholder="Province" @bind-Value="user.Province"
+            <SfAutoComplete @ref="AutoCompleteObj" TValue="string" TItem="Province" Placeholder="@provincePlaceholder" @bind-Value="user.Province"
                     DataSource="@Provinces" FilterType="Syncfusion.Blazor.DropDowns.FilterType.StartsWith">
                 <AutoCompleteFieldSettings Value="Name"></AutoCompleteFieldSettings>
                     <AutoCompleteEvents TItem="Province" TValue="string" ValueChange="@ProvinceChanged" 
@@ -93,7 +93,7 @@
             <div class="col form-group">
                 <label class="control-label">Price per hour (€):</label>
                 <SfIcon class="info-icon" id="price-info-icon" Name="IconName.CircleInfo"></SfIcon>
-                <SfNumericTextBox TValue="int?" Placeholder="Price" @bind-Value=@user.Price Min="1"> @* CssClass="@cssClassUsername" *@
+                <SfNumericTextBox TValue="int?" Placeholder="@pricePlaceholder" @bind-Value=@user.Price Min="1"> @* CssClass="@cssClassUsername" *@
                     <NumericTextBoxEvents TValue="int?" Blur="PriceBlur"></NumericTextBoxEvents>
                 </SfNumericTextBox>
                 <ValidationMessage For="@(() => user.Price)"></ValidationMessage>
@@ -183,6 +183,9 @@
     private bool ShowButtons { get; set; } = true;
     private string firstnamePlaceholder { get; set; } = "Enter your firstname";
     private string lastnamePlaceholder { get; set; } = "Enter your lastname";
+    private string specialityPlaceholder { get; set; } = "Enter your speciality";
+    private string provincePlaceholder { get; set; } = "Enter your province";
+    private string pricePlaceholder { get; set; } = "Enter the price of your services";
     private bool switchDisable {get; set;}
     string cssClassSwitchMessage = "hide-message";
 
@@ -221,26 +224,14 @@
     {
         if (firstRender)
         {
-            // await LoadRequests();
-            // teacherNoRequests = teacherProfileRequest == null ? true : false;
             await JSRuntime.InvokeAsync<bool>("canvasInterop.onInitialized");
             StateHasChanged();
         }
 
     }
-    // async Task LoadRequests()
-    // {
-    //     var path = Navigation.BaseUri + $"TeacherProfileRequest/GetOneTeacherProfileRequestByTeacherId?Id={user.Id}";
-    //     var result = await Http.GetFromJsonAsync<TeacherProfileRequest>(path);
-    //     if (result.Id != null)
-    //     {
-    //         teacherProfileRequest = result;
-    //     }
-    // }
+
     public async void FirstnameBlur(FocusOutEventArgs args)
     {
-        // if (user.Firstname != null && user.Firstname != String.Empty)
-        // {
             await UpdateUserContext(user);
             ChangeInRequiredFields();
             await AreRequiredFieldsFilled();
@@ -263,7 +254,6 @@
                 cssClassSwitchMessage = "hide-message";
             }
             StateHasChanged();
-        // }
     }
 
     public async void LastnameBlur(FocusOutEventArgs args)
