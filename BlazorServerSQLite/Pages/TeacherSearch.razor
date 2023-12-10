@@ -62,19 +62,11 @@
     }
     async Task LoadUsers()
     {
-        //var path = navigationManager.BaseUri + "Users/GetApplicationUsers";
         var path = navigationManager.BaseUri + "Users/GetTeachersWithPublicProfile";
         var result = await Http.GetFromJsonAsync<List<ApplicationUser>>(path);
         usersList = result;
     }
-    // private void ProvinceBlur(Object args)
-    // {
-    //     usersList = usersList.Where(x => x.Province == AutoCompleteObj.Value).ToList();
-    // }
-    // private void ProvinceSelect(SelectEventArgs<Province> args)
-    // {
-    //     usersList = usersList.Where(x => x.Province == AutoCompleteObj.Value).ToList();
-    // }
+
     private void ProvinceChanged(ChangeEventArgs<string,Province> args)
     {
         if (AutoCompleteObj.Value != null)
