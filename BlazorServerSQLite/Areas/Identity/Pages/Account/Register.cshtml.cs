@@ -104,8 +104,8 @@ namespace BlazorServerSQLite.Areas.Identity.Pages.Account
 
             [Required]
             public string Role { get; set; }
-            //[Required]
-            //public string Firstname { get; set; }
+
+            public string Firstname { get; set; }
             //[Required]
             //public string Lastname { get; set; }
             //[Required]
@@ -129,6 +129,7 @@ namespace BlazorServerSQLite.Areas.Identity.Pages.Account
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+                user.Firstname = "";
                 //user.Firstname = Input.Firstname;
                 //user.Lastname = Input.Lastname;
                 //user.Province = Input.Province;
