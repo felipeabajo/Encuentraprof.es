@@ -11,14 +11,14 @@
     <div class="form-row">
         <div class="col form-group">
             <SfAutoComplete @ref="AutoCompleteObj1" TValue="string" TItem="Speciality" Placeholder="Speciality"
-                            DataSource="@Specialities" FilterType="Syncfusion.Blazor.DropDowns.FilterType.StartsWith">
+                            DataSource="@Speciality.Specialities" FilterType="Syncfusion.Blazor.DropDowns.FilterType.StartsWith">
                 <AutoCompleteFieldSettings Value="Name"></AutoCompleteFieldSettings>
                 <AutoCompleteEvents TItem="Speciality" TValue="string" ValueChange="@SpecialityChanged"></AutoCompleteEvents>
             </SfAutoComplete>
         </div>
         <div class="col form-group">
             <SfAutoComplete @ref="AutoCompleteObj" TValue="string" TItem="Province" Placeholder="Province"
-                            DataSource="@Provinces" FilterType="Syncfusion.Blazor.DropDowns.FilterType.StartsWith">
+                            DataSource="@Province.Provinces" FilterType="Syncfusion.Blazor.DropDowns.FilterType.StartsWith">
                 <AutoCompleteFieldSettings Value="Name"></AutoCompleteFieldSettings>
                 <AutoCompleteEvents TItem="Province" TValue="string" ValueChange="@ProvinceChanged"></AutoCompleteEvents> @* Blur="@ProvinceBlur"  OnValueSelect="@ProvinceSelect"*@
             </SfAutoComplete>
@@ -97,77 +97,4 @@
             selectedUsersList = usersList;
         }
     }
-    public class Speciality
-    {
-        public string Name { get; set; }
-        public int Code { get; set; }
-    }
-
-    List<Speciality> Specialities = new List<Speciality>
-    {
-        new Speciality (){Name = "French", Code = 01},
-        new Speciality (){Name = "English", Code = 02},
-        new Speciality (){Name = "Spanish", Code = 03}
-    };
-    public class Province
-    {
-        public string Name { get; set; }
-        public int Code { get; set; }
-    }
-
-    List<Province> Provinces = new List<Province>
-    {
-        new Province (){Name = "Albacete", Code = 02},
-        new Province (){Name = "Alicante", Code = 03},
-        new Province (){Name = "Almería", Code = 04},
-        new Province (){Name = "Álava", Code = 01},
-        new Province (){Name = "Asturias", Code = 33},
-        new Province (){Name = "Ávila", Code = 05},
-        new Province (){Name = "Badajoz", Code = 06},
-        new Province (){Name = "Balears, Illes", Code = 07},
-        new Province (){Name = "Barcelona", Code = 08},
-        new Province (){Name = "Bizkaia", Code = 48},
-        new Province (){Name = "Burgos", Code = 09},
-        new Province (){Name = "Cáceres", Code = 10},
-        new Province (){Name = "Cádiz", Code = 11},
-        new Province (){Name = "Cantabria", Code = 39},
-        new Province (){Name = "Castellón", Code = 12},
-        new Province (){Name = "Ciudad Real", Code = 13},
-        new Province (){Name = "Córdoba", Code = 14},
-        new Province (){Name = "A Coruña", Code = 15},
-        new Province (){Name = "Cuenca", Code = 16},
-        new Province (){Name = "Gipuzkoa", Code = 20},
-        new Province (){Name = "Girona", Code = 17},
-        new Province (){Name = "Granada", Code = 18},
-        new Province (){Name = "Guadalajara", Code = 19},
-        new Province (){Name = "Huelva", Code = 21},
-        new Province (){Name = "Huesca", Code = 22},
-        new Province (){Name = "Jaén", Code = 23},
-        new Province (){Name = "León", Code = 24},
-        new Province (){Name = "Lleida", Code = 25},
-        new Province (){Name = "Lugo", Code = 27},
-        new Province (){Name = "Madrid", Code = 28},
-        new Province (){Name = "Málaga", Code = 29},
-        new Province (){Name = "Murcia", Code = 30},
-        new Province (){Name = "Navarra", Code = 31},
-        new Province (){Name = "Ourense", Code = 32},
-        new Province (){Name = "Palencia", Code = 34},
-        new Province (){Name = "Las Palmas", Code = 35},
-        new Province (){Name = "Pontevedra", Code = 36},
-        new Province (){Name = "La Rioja", Code = 26},
-        new Province (){Name = "Salamanca", Code = 37},
-        new Province (){Name = "Santa Cruz de Tenerife", Code = 38},
-        new Province (){Name = "Segovia", Code = 40},
-        new Province (){Name = "Sevilla", Code = 41},
-        new Province (){Name = "Soria", Code = 42},
-        new Province (){Name = "Tarragona", Code = 43},
-        new Province (){Name = "Teruel", Code = 44},
-        new Province (){Name = "Toledo", Code = 45},
-        new Province (){Name = "Valencia", Code = 46},
-        new Province (){Name = "Valladolid", Code = 47},
-        new Province (){Name = "Zamora", Code = 49},
-        new Province (){Name = "Zaragoza", Code = 50},
-        new Province (){Name = "Ceuta", Code = 51},
-        new Province (){Name = "Melilla", Code = 52},
-    };
 }

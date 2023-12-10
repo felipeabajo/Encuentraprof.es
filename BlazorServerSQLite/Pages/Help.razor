@@ -58,7 +58,7 @@
     [Inject]
     UserManager<ApplicationUser> userManager { get; set; }
     MailRequest mailRequest = new MailRequest();
-    ApplicationUser? user;
+    // ApplicationUser? user;
     private bool emailSent = false;
     string cssClassSentMessage = "hide-message";
     private bool sendButtonDisable = true;
