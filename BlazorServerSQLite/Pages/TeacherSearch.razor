@@ -56,9 +56,9 @@
         if (user2.Identity.IsAuthenticated)
         {
             user = await userManager.GetUserAsync(user2);
-            editContext = new EditContext(user);
             userAuthenticated = true;
         }
+        editContext = new EditContext(this);
         await LoadUsers();
         provinceAppliedUsersList = usersList;
         specialityAppliedUsersList = usersList;
