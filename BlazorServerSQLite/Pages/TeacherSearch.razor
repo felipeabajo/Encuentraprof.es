@@ -36,6 +36,8 @@
     private EditContext editContext;
     private List<ApplicationUser> usersList = new List<ApplicationUser>();
     private List<ApplicationUser> selectedUsersList = new List<ApplicationUser>();
+    private List<ApplicationUser> provinceAppliedUsersList = new List<ApplicationUser>();
+    private List<ApplicationUser> specialityAppliedUsersList = new List<ApplicationUser>();
     private bool userAuthenticated { get; set; } = false;
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; }
@@ -58,6 +60,10 @@
             userAuthenticated = true;
         }
         await LoadUsers();
+        provinceAppliedUsersList = usersList;
+        specialityAppliedUsersList = usersList;
+        // selectedUsersList = (List<ApplicationUser>) usersList.AsQueryable().
+        //     Intersect(provinceAppliedUsersList).Intersect(specialityAppliedUsersList).ToList();
         selectedUsersList = usersList;
     }
     async Task LoadUsers()
@@ -71,22 +77,28 @@
     {
         if (AutoCompleteObj.Value != null)
         {
-            selectedUsersList = usersList.Where(x => x.Province == AutoCompleteObj.Value).ToList();
+            provinceAppliedUsersList = usersList.Where(x => x.Province == AutoCompleteObj.Value).ToList();
+            selectedUsersList = (List<ApplicationUser>)usersList.AsQueryable().
+                Intersect(provinceAppliedUsersList).Intersect(specialityAppliedUsersList).ToList();
+            //StateHasChanged();
         }
-        else
-        {
-            selectedUsersList = usersList;
-        }
+        // else
+        // {
+        //     selectedUsersList = usersList;
+        // }
     }
     private async void SpecialityChanged(ChangeEventArgs<string, Speciality> args)
     {
         if (AutoCompleteObj1.Value != null)
         {
-            selectedUsersList = usersList.Where(x => x.Speciality == AutoCompleteObj1.Value).ToList();
+            specialityAppliedUsersList = usersList.Where(x => x.Speciality == AutoCompleteObj1.Value).ToList();
+            selectedUsersList = (List<ApplicationUser>)usersList.AsQueryable().
+                Intersect(provinceAppliedUsersList).Intersect(specialityAppliedUsersList).ToList();
+            //StateHasChanged();
         }
-        else
-        {
-            selectedUsersList = usersList;
-        }
+        // else
+        // {
+        //     selectedUsersList = usersList;
+        // }
     }
 }
