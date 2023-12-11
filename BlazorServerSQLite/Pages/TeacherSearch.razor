@@ -10,12 +10,11 @@
 <EditForm EditContext="@editContext">
     <div class="form-row">
         <div class="col form-group">
-@*             <SfAutoComplete @ref="AutoCompleteObj1" TValue="string" TItem="Speciality" Placeholder="Speciality"
+            <SfAutoComplete @ref="AutoCompleteObj1" TValue="string" TItem="Speciality" Placeholder="Speciality"
                             DataSource="@Speciality.Specialities" FilterType="Syncfusion.Blazor.DropDowns.FilterType.StartsWith">
                 <AutoCompleteFieldSettings Value="Name"></AutoCompleteFieldSettings>
                 <AutoCompleteEvents TItem="Speciality" TValue="string" ValueChange="@SpecialityChanged"></AutoCompleteEvents>
-            </SfAutoComplete> *@
-            <SpecialitySelector @bind-provinceAppliedUsersList="provinceAppliedUsersList" /> @* RefreshSelectedUsersList="@RefreshSelectedUsersList" *@
+            </SfAutoComplete>
         </div>
         <div class="col form-group">
             <SfAutoComplete @ref="AutoCompleteObj" TValue="string" TItem="Province" Placeholder="Province"
@@ -63,16 +62,8 @@
         await LoadUsers();
         provinceAppliedUsersList = usersList;
         specialityAppliedUsersList = usersList;
-        // selectedUsersList = (List<ApplicationUser>) usersList.AsQueryable().
-        //     Intersect(provinceAppliedUsersList).Intersect(specialityAppliedUsersList).ToList();
         selectedUsersList = usersList;
     }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        RefreshSelectedUsersList();
-    }
-
     async Task LoadUsers()
     {
         var path = navigationManager.BaseUri + "Users/GetTeachersWithPublicProfile";
@@ -80,39 +71,37 @@
         usersList = result;
     }
 
-    public void RefreshSelectedUsersList()
-    {
-        selectedUsersList = (List<ApplicationUser>)usersList.AsQueryable().
-                 Intersect(provinceAppliedUsersList).Intersect(specialityAppliedUsersList).ToList();
-    }
-
-    private void ProvinceChanged(ChangeEventArgs<string,Province> args)
+    private void ProvinceChanged(ChangeEventArgs<string, Province> args)
     {
         if (AutoCompleteObj.Value != null)
         {
-            provinceAppliedUsersList = usersList.Where(x => x.Province == AutoCompleteObj.Value).ToList();
-            selectedUsersList = (List<ApplicationUser>)usersList.AsQueryable().
-                Intersect(provinceAppliedUsersList).Intersect(specialityAppliedUsersList).ToList();
-            //StateHasChanged();
+            if (AutoCompleteObj.Value != "")
+            {
+                provinceAppliedUsersList = usersList.Where(x => x.Province == AutoCompleteObj.Value).ToList();
+            }
         }
-        // else
-        // {
-        //     selectedUsersList = usersList;
-        // }
+        else
+        {
+            provinceAppliedUsersList = usersList;
+        }
+        selectedUsersList = (List<ApplicationUser>)usersList.AsQueryable().
+        Intersect(provinceAppliedUsersList).Intersect(specialityAppliedUsersList).ToList();
     }
+    private async void SpecialityChanged(ChangeEventArgs<string, Speciality> args)
+    {
 
-    // private async void SpecialityChanged(ChangeEventArgs<string, Speciality> args)
-    // {
-    //     if (AutoCompleteObj1.Value != null)
-    //     {
-    //         specialityAppliedUsersList = usersList.Where(x => x.Speciality == AutoCompleteObj1.Value).ToList();
-    //         selectedUsersList = (List<ApplicationUser>)usersList.AsQueryable().
-    //             Intersect(provinceAppliedUsersList).Intersect(specialityAppliedUsersList).ToList();
-    //         //StateHasChanged();
-    //     }
-    //     // else
-    //     // {
-    //     //     selectedUsersList = usersList;
-    //     // }
-    // }
+        if (AutoCompleteObj1.Value != null)
+        {
+            if (AutoCompleteObj1.Value != "")
+            {
+                specialityAppliedUsersList = usersList.Where(x => x.Speciality == AutoCompleteObj1.Value).ToList();
+            }
+        }
+        else
+        {
+            specialityAppliedUsersList = usersList;
+        }
+        selectedUsersList = (List<ApplicationUser>)usersList.AsQueryable().
+                Intersect(provinceAppliedUsersList).Intersect(specialityAppliedUsersList).ToList();
+    }
 }
