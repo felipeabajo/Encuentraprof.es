@@ -10,11 +10,12 @@
 <EditForm EditContext="@editContext">
     <div class="form-row">
         <div class="col form-group">
-            <SfAutoComplete @ref="AutoCompleteObj1" TValue="string" TItem="Speciality" Placeholder="Speciality"
+@*             <SfAutoComplete @ref="AutoCompleteObj1" TValue="string" TItem="Speciality" Placeholder="Speciality"
                             DataSource="@Speciality.Specialities" FilterType="Syncfusion.Blazor.DropDowns.FilterType.StartsWith">
                 <AutoCompleteFieldSettings Value="Name"></AutoCompleteFieldSettings>
                 <AutoCompleteEvents TItem="Speciality" TValue="string" ValueChange="@SpecialityChanged"></AutoCompleteEvents>
-            </SfAutoComplete>
+            </SfAutoComplete> *@
+            <SpecialitySelector @bind-provinceAppliedUsersList="provinceAppliedUsersList" /> @* RefreshSelectedUsersList="@RefreshSelectedUsersList" *@
         </div>
         <div class="col form-group">
             <SfAutoComplete @ref="AutoCompleteObj" TValue="string" TItem="Province" Placeholder="Province"
@@ -66,11 +67,23 @@
         //     Intersect(provinceAppliedUsersList).Intersect(specialityAppliedUsersList).ToList();
         selectedUsersList = usersList;
     }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        RefreshSelectedUsersList();
+    }
+
     async Task LoadUsers()
     {
         var path = navigationManager.BaseUri + "Users/GetTeachersWithPublicProfile";
         var result = await Http.GetFromJsonAsync<List<ApplicationUser>>(path);
         usersList = result;
+    }
+
+    public void RefreshSelectedUsersList()
+    {
+        selectedUsersList = (List<ApplicationUser>)usersList.AsQueryable().
+                 Intersect(provinceAppliedUsersList).Intersect(specialityAppliedUsersList).ToList();
     }
 
     private void ProvinceChanged(ChangeEventArgs<string,Province> args)
@@ -87,18 +100,19 @@
         //     selectedUsersList = usersList;
         // }
     }
-    private async void SpecialityChanged(ChangeEventArgs<string, Speciality> args)
-    {
-        if (AutoCompleteObj1.Value != null)
-        {
-            specialityAppliedUsersList = usersList.Where(x => x.Speciality == AutoCompleteObj1.Value).ToList();
-            selectedUsersList = (List<ApplicationUser>)usersList.AsQueryable().
-                Intersect(provinceAppliedUsersList).Intersect(specialityAppliedUsersList).ToList();
-            //StateHasChanged();
-        }
-        // else
-        // {
-        //     selectedUsersList = usersList;
-        // }
-    }
+
+    // private async void SpecialityChanged(ChangeEventArgs<string, Speciality> args)
+    // {
+    //     if (AutoCompleteObj1.Value != null)
+    //     {
+    //         specialityAppliedUsersList = usersList.Where(x => x.Speciality == AutoCompleteObj1.Value).ToList();
+    //         selectedUsersList = (List<ApplicationUser>)usersList.AsQueryable().
+    //             Intersect(provinceAppliedUsersList).Intersect(specialityAppliedUsersList).ToList();
+    //         //StateHasChanged();
+    //     }
+    //     // else
+    //     // {
+    //     //     selectedUsersList = usersList;
+    //     // }
+    // }
 }
