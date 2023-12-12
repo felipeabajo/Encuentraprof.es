@@ -45,3 +45,7 @@ make RefreshSelectedUsers an Async method. ❌. This does not avoid the infinite
 29. Get ready Personal Information valid for Users and Teachers. Add Personal Information to Navigation. Hide SfIcon (intended for teachers since it talks about publicProfiles).
 30. UI for deleting account created in settings. Remove commented code from PersonalInformation. Remove commented code from site.css.
 31. Rename PersonalInformation elements of Dialog, remove this from Edit.
+32. Fix UX for Firstname for Users because there's the red color but (required) but not intended to be required. QuickFix: Enter a different Icon saying it's required... but how can I really prove it or hide functionality for that? Options:
+- Hide Personal Information (MVP only because UX not very good)
+- Separate classes... huge impact. 
+- Remove Required from ApplicationUser and try to apply only in PersonalInformation by creating a subclass of ApplicationUser?
