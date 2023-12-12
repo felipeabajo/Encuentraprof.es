@@ -58,7 +58,9 @@
     <div class="form-row">
         <div class="col form-group">
             <label class="control-label">Firstname:</label>
-            <SfIcon class="info-icon" id="firstname-info-icon" Name="IconName.CircleInfo"></SfIcon>
+            <AuthorizeView Roles="Teacher" Context="teacherContext">
+                <SfIcon class="info-icon" id="firstname-info-icon" Name="IconName.CircleInfo"></SfIcon>
+            </AuthorizeView>
             <SfTextBox Blur="FirstnameBlur" @bind-Value=@user.Firstname Placeholder="@firstnamePlaceholder"></SfTextBox> @* CssClass="@cssClassFirstname" *@
         </div>
         <div class="col form-group">
