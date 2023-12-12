@@ -24,11 +24,13 @@ else
                       IconCss="e-icons e-home"
                       OnClick="@(() => NavigateToRazorPage("/"))"></SfButton>
         </div>
-        <div class="nav-item px-3">
-            <SfButton CssClass="nav-link e-inherit" Content="Personal information"
-                        IconCss="e-icons e-user"
-                        OnClick="@(() => NavigateToRazorPage("/personal-information"))"></SfButton>
-        </div>
+        <AuthorizeView Roles="Teacher" Context="teacherContext">
+            <div class="nav-item px-3">
+                <SfButton CssClass="nav-link e-inherit" Content="Personal information"
+                            IconCss="e-icons e-user"
+                            OnClick="@(() => NavigateToRazorPage("/personal-information"))"></SfButton>
+            </div>
+        </AuthorizeView>
         <AuthorizeView Roles="Administrator" Context="administratorContext">
             <div class="nav-item px-3">
                 <SfButton CssClass="nav-link e-inherit" Content="Teacher profile requests"

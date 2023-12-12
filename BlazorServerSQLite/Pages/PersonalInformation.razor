@@ -3,7 +3,7 @@
 @inject ProtectedLocalStorage ProtectedLocalStorage
 @inject HttpClient Http
 @inject NavigationManager Navigation
-@attribute [Authorize]
+@attribute [Authorize (Roles = "Teacher")]
 
 <PageTitle>Personal information</PageTitle>
 <Heading1 text="Personal information"></Heading1>
@@ -58,10 +58,10 @@
     <div class="form-row">
         <div class="col form-group">
             <label class="control-label">Firstname:</label>
-            <AuthorizeView Roles="Teacher" Context="teacherContext">
-                <SfIcon class="info-icon" id="firstname-info-icon" Name="IconName.CircleInfo"></SfIcon>
-            </AuthorizeView>
-            <SfTextBox Blur="FirstnameBlur" @bind-Value=@user.Firstname Placeholder="@firstnamePlaceholder"></SfTextBox> @* CssClass="@cssClassFirstname" *@
+@*             <AuthorizeView Roles="Teacher" Context="teacherContext">
+ *@                <SfIcon class="info-icon" id="firstname-info-icon" Name="IconName.CircleInfo"></SfIcon>
+@*             </AuthorizeView>
+ *@            <SfTextBox Blur="FirstnameBlur" @bind-Value=@user.Firstname Placeholder="@firstnamePlaceholder"></SfTextBox> @* CssClass="@cssClassFirstname" *@
         </div>
         <div class="col form-group">
             <label class="control-label">Lastname:</label>
@@ -69,8 +69,8 @@
 
       </div>
     </div>
-    <AuthorizeView Roles="Teacher" Context="teacherContext">
-        <div class="form-row">
+@*     <AuthorizeView Roles="Teacher" Context="teacherContext">
+ *@        <div class="form-row">
             <div class="col form-group">
                 <label class="control-label">Speciality:</label>
                 <SfIcon class="info-icon" id="speciality-info-icon" Name="IconName.CircleInfo"></SfIcon>
@@ -112,8 +112,8 @@
                     </div>
                 </div>
             </div>
-    </AuthorizeView>
-</EditForm>
+@*     </AuthorizeView>
+ *@</EditForm>
 <SfToast ID="do-toast" @ref="DoToastObj" CssClass="toast_template"
          Timeout="10000" ExtendedTimeout="5000">
     <ToastPosition X="Left" Y="Bottom"></ToastPosition>
