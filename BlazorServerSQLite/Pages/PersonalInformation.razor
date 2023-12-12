@@ -20,14 +20,14 @@
                         <canvas class="my-2" id="img-canvas" style="max-width: 150px; max-height: 150px;"></canvas>
                         <img alt="img" id="custom-img" crossorigin="anonymous" @onload="OnLoad" style="display: none;"
                                 src="@userImagePath" />
-                        <span id="custom-edit" class="e-custom-edit e-btn e-primary" contenteditable="false" @onclick="Edit">
+                        <span id="custom-edit" class="e-custom-edit e-btn e-primary" contenteditable="false" @onclick="EditUploadImage">
                             <SfIcon class="e-custom-icon e-image-editor-icons" contenteditable="false" IconCss="e-icons e-edit"></SfIcon>
                         </span>
                     </div>
                 </div>
-                <SfDialog Target="#profile-image-section" @bind-Visible="Visibility"
+                <SfDialog Target="#profile-image-section" @bind-Visible="uploadImageVisibility"
                         ShowCloseIcon="true" Width="340px" Height="400px">
-                    <DialogEvents Opened="DialogOpened" Closed="DialogClosed"></DialogEvents>
+                    <DialogEvents Opened="UploadImageDialogOpened" Closed="UploadImageDialogClosed"></DialogEvents>
                     <DialogTemplates>
                         <Header>
                                 Upload Profile Image
@@ -166,7 +166,7 @@
     private bool? done = false;
     private bool changeInRequiredFields = false;
     private bool areRequiredFieldsFilled { get; set; }
-    private bool Visibility { get; set; } = false;
+    private bool uploadImageVisibility { get; set; } = false;
     private bool isOpened { get; set; }
     private DotNetObjectReference<PersonalInformation>? objRef;
     private string dataUrl;
@@ -375,7 +375,7 @@
 
     private void OnTimedEvent(Object source, System.Timers.ElapsedEventArgs e)
     {
-        Visibility = false;
+        uploadImageVisibility = false;
         InvokeAsync(StateHasChanged);
     }
 
@@ -490,7 +490,7 @@
     {
         await JSRuntime.InvokeAsync<bool>("canvasInterop.imageLoaded", objRef);
     }
-    private async Task DialogOpened(Syncfusion.Blazor.Popups.OpenEventArgs args)
+    private async Task UploadImageDialogOpened(Syncfusion.Blazor.Popups.OpenEventArgs args)
     {
         if (!isOpened)
         {
@@ -498,13 +498,13 @@
             StateHasChanged();
         }
     }
-    private async Task DialogClosed(Syncfusion.Blazor.Popups.CloseEventArgs args)
+    private async Task UploadImageDialogClosed(Syncfusion.Blazor.Popups.CloseEventArgs args)
     {
         isOpened = false;
     }
-    private async void Edit()
+    private async void EditUploadImage()
     {
-        this.Visibility = true;
+        uploadImageVisibility = true;
         dataUrl = await JSRuntime.InvokeAsync<string>("canvasInterop.getImageSource");
     }
 }
