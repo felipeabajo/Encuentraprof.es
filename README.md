@@ -41,4 +41,5 @@ make RefreshSelectedUsers an Async method. ❌. This does not avoid the infinite
 27. Enable TeacherSearch without being logged in (when this is ready). EditContext uses user, thus, it only works if user is signed in. Try to change this. Options:
 - EditContext without user. ✔ (using this)
 - Model: Create a class with the required info.
-28. TestToastMessage deleted. 
+28. TestToastMessage deleted.
+29. Get ready Personal Information valid for Users and Teachers. Add Personal Information to Navigation. Hide SfIcon (intended for teachers since it talks about publicProfiles).
