@@ -37,11 +37,11 @@ else
                           OnClick="@(() => NavigateToRazorPage("/admin-teacher-profile-requests"))"></SfButton>
             </div>
         </AuthorizeView>
-        <div class="nav-item px-3">
+@*         <div class="nav-item px-3">
             <SfButton CssClass="nav-link e-inherit" Content="Password"
                       IconCss="e-icons e-lock"
                       OnClick="@(() => NavigateToCsHtmlPage("/Identity/Account/Manage/ChangePassword"))"></SfButton>
-        </div>
+        </div> *@
         <div class="nav-item px-3">
             <SfButton CssClass="nav-link e-inherit" Content="Settings"
                       IconCss="e-icons e-settings"
@@ -116,7 +116,7 @@ else
         }
         catch (Exception e)
         {
-            System.Diagnostics.Debug.WriteLine(e.ToString());
+            throw;
         }
     }
 }

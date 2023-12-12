@@ -2,11 +2,40 @@
 @attribute [Authorize]
 @inject NavigationManager Navigation
 @inject HttpClient Http
+@inject IJSRuntime JSRuntime
 
 
 <PageTitle>Settings</PageTitle>
 <Heading1 text="Settings"></Heading1>
 
+<div class="container border p-0" id="dialog-section">
+    <ul class="p-0 m-0">
+        <li class="container-row border d-flex flex-row flex-items-center flex-space-between flex-wrap flex-sm-nowrap p-4">
+            <div class="md-order-1 order-2">
+                <SfButton OnClick="@(() => NavigateToCsHtmlPage("/Identity/Account/Manage/ChangePassword"))">
+                    Change password
+                </SfButton>
+            </div>
+            <div class="mb-md-0 mb-2"> 
+                <strong>
+                    Change password
+                </strong>
+            </div>
+        </li>
+        <li class="container-row border d-flex flex-row flex-items-center flex-space-between flex-wrap flex-sm-nowrap p-4">
+            <div class="md-order-1 order-2">
+                <SfButton OnClick="@(() => NavigateToCsHtmlPage("/Identity/Account/Manage/PersonalData"))">
+                    Personal data
+                </SfButton>
+            </div>
+            <div class="mb-md-0 mb-2">
+                <strong>
+                    Personal data
+                </strong>
+            </div>
+        </li>
+    </ul>
+</div>
 
 @* <div class="container border border-danger p-0" id="dialog-section">
     <ul class="p-0 m-0">
@@ -104,6 +133,17 @@
         deleteAccountDialogVisibility = true;
     }
 
+    async Task NavigateToCsHtmlPage(string page)
+    {
+        try
+        {
+            await JSRuntime.InvokeAsync<object>("open", page, "_self"); //also valid with other a[target] values
+        }
+        catch (Exception e)
+        {
+            throw;
+        }
+    }
     // private async void DeleteAccount()
     // {
     //     //call to Logout

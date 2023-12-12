@@ -10,10 +10,14 @@ namespace BlazorServerSQLite.Data
 {
     public class ApplicationUser : IdentityUser
     {
+        [ProtectedPersonalData]
         [Required]
         public string? Firstname { get; set; }
+
+        [ProtectedPersonalData]
         public string? Lastname { get; set; }
 
+        [ProtectedPersonalData]
         [Required]
         public string? Province { get; set; }
 
