@@ -18,7 +18,7 @@
                 <div class="e-profile e-img-editor-sample e-hide">
                     <div class="e-custom-wrapper">
                         <canvas class="my-2" id="img-canvas" style="max-width: 150px; max-height: 150px;"></canvas>
-                        <img alt="img" id="custom-img" crossorigin="anonymous" @onload="onLoad" style="display: none;"
+                        <img alt="img" id="custom-img" crossorigin="anonymous" @onload="OnLoad" style="display: none;"
                                 src="@userImagePath" />
                         <span id="custom-edit" class="e-custom-edit e-btn e-primary" contenteditable="false" @onclick="Edit">
                             <SfIcon class="e-custom-icon e-image-editor-icons" contenteditable="false" IconCss="e-icons e-edit"></SfIcon>
@@ -27,13 +27,13 @@
                 </div>
                 <SfDialog Target="#profile-image-section" @bind-Visible="Visibility"
                         ShowCloseIcon="true" Width="340px" Height="400px">
-                    <DialogEvents Opened="dialogOpened" Closed="dialogClosed"></DialogEvents>
+                    <DialogEvents Opened="DialogOpened" Closed="DialogClosed"></DialogEvents>
                     <DialogTemplates>
                         <Header>
                                 Upload Profile Image
                         </Header>
                         <Content>
-                            <div class="dialogContent">
+                            <div class="dialog-content">
                                 @if (isOpened)
                                 {
                                     <SfIcon Name="IconName.CircleInfo"></SfIcon>
@@ -151,10 +151,6 @@
 </SfToast>
 
 @code {
-    // private string cssClassFirstname;
-    // private string cssClassLastname;
-    // private string cssClassUsername;
-    // private string cssClassProvince;
     public ApplicationUser? user;
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; }
@@ -162,8 +158,6 @@
     UserManager<ApplicationUser> userManager { get; set; }
     private EditContext editContext;
     public string userImagePath;
-    // public TeacherProfileRequest? teacherProfileRequest;
-    // bool teacherNoRequests { get; set; }
     TeacherNeverPublicAlert teacherNeverPublicAlert = new TeacherNeverPublicAlert();
     SfToast DoToastObj;
     SfToast UndoToastObj;
@@ -172,7 +166,6 @@
     private bool? done = false;
     private bool changeInRequiredFields = false;
     private bool areRequiredFieldsFilled { get; set; }
-    // private bool requestButtonDisabled = true;
     private bool Visibility { get; set; } = false;
     private bool isOpened { get; set; }
     private DotNetObjectReference<PersonalInformation>? objRef;
@@ -493,11 +486,11 @@
         }
     }
 
-    private async Task onLoad()
+    private async Task OnLoad()
     {
         await JSRuntime.InvokeAsync<bool>("canvasInterop.imageLoaded", objRef);
     }
-    private async Task dialogOpened(Syncfusion.Blazor.Popups.OpenEventArgs args)
+    private async Task DialogOpened(Syncfusion.Blazor.Popups.OpenEventArgs args)
     {
         if (!isOpened)
         {
@@ -505,7 +498,7 @@
             StateHasChanged();
         }
     }
-    private async Task dialogClosed(Syncfusion.Blazor.Popups.CloseEventArgs args)
+    private async Task DialogClosed(Syncfusion.Blazor.Popups.CloseEventArgs args)
     {
         isOpened = false;
     }
@@ -885,10 +878,6 @@
     .e-bigger.bootstrap .e-custom-img-btn,
     .e-bigger.bootstrap-dark .e-custom-img-btn {
         padding: 1px 10px !important;
-    }
-
-    .dialogContent {
-        height: 100%;
     }
 
     .material3 .e-custom-img-btn,

@@ -1,0 +1,111 @@
+﻿@page "/settings"
+@attribute [Authorize]
+@inject NavigationManager Navigation
+
+
+<PageTitle>Settings</PageTitle>
+<Heading1 text="Settings"></Heading1>
+
+
+<div class="container border border-danger p-0" id="dialog-section">
+    <ul class="p-0 m-0">
+        <li class="container-row border d-flex flex-row flex-items-center flex-space-between flex-wrap flex-sm-nowrap p-4">
+            <div class="md-order-1 order-2">
+                 <EditForm EditContext="@editContext">
+                    <SfButton CssClass="e-danger" OnClick="OpenDeleteAccountDialog">
+                        Delete account
+                    </SfButton>
+                </EditForm>
+            </div>
+            <div class="mb-md-0 mb-2">
+@*                 flex-auto
+ *@             <strong>
+                    Delete account
+                </strong>
+                <p class="mb-0">
+                    Once you delete the account, there is no going back. Please be certain.
+                </p>
+            </div>
+           @*  <div class="control-section" id="delete-account-dialog-section"> *@
+                <SfDialog @bind-Visible="@deleteAccountDialogVisibility"
+                      ShowCloseIcon="true" Width="340px" Height="400px" Target="dialog-section">
+                @*  Target="#delete-account-dialog-section" *@
+                    <DialogEvents Opened="DeleteAccountDialogOpened" Closed="DeleteAccountDialogClosed"></DialogEvents>
+                    <DialogTemplates>
+                        <Header>
+                            Delete account
+                        </Header>
+                        <Content>
+                            <div class="dialogContent">
+                                @if (isDeleteAccountDialogOpened)
+                                {
+                                    <SfButton> @* OnClick="DeleteAccount" *@
+                                        I want to delete this account
+                                    </SfButton>
+                                }
+                            </div>
+                        </Content>
+                    </DialogTemplates>
+                    <DialogPositionData X="center" Y="center"></DialogPositionData>
+                </SfDialog>
+            @* </div> *@
+        </li>
+    </ul>
+</div>
+
+@* <div class="row single-col">
+    <div class="col">
+        
+    </div>
+</div>
+
+<EditForm EditContext="@editContext">
+
+</EditForm> *@
+
+
+@code {
+    private EditContext editContext;
+    public ApplicationUser? user;
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+    [Inject]
+    UserManager<ApplicationUser> userManager { get; set; }
+    private bool deleteAccountDialogVisibility { get; set; } = false;
+    private bool isDeleteAccountDialogOpened { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var user2 = (await authenticationStateTask).User;
+        if (user2.Identity.IsAuthenticated)
+        {
+            user = await userManager.GetUserAsync(user2);
+            editContext = new EditContext(user);
+        }
+    }
+
+    private async Task DeleteAccountDialogOpened(Syncfusion.Blazor.Popups.OpenEventArgs args)
+    {
+        if (!isDeleteAccountDialogOpened)
+        {
+            isDeleteAccountDialogOpened = true;
+            StateHasChanged();
+        }
+    }
+
+    private async Task DeleteAccountDialogClosed(Syncfusion.Blazor.Popups.CloseEventArgs args)
+    {
+        isDeleteAccountDialogOpened = false;
+    }
+
+    private async void OpenDeleteAccountDialog()
+    {
+        deleteAccountDialogVisibility = true;
+    }
+
+    // private async void DeleteAccount()
+    // {
+    //     //call to controller
+    //     await userManager.DeleteAsync(user);
+    // }
+}

@@ -15,22 +15,27 @@
     flex: 1 0 0%;
     max-height: 300px;
 }
+.flex-items-center {
+    align-items: center;
+}
+.flex-space-between {
+    justify-content: space-between;
+}
+.container{
+    border-radius: 4px; 
+}
+.container-row.border {
+    border-bottom: 0 !important;
+    border-left: 0 !important;
+    border-right: 0 !important;
+}
+.container-row.border:first-of-type{
+    border-top: transparent !important;
+}
 
 /*Forms*/
-/*.form-row .col.form-group .e-input-group {
-    max-width: fit-content;
-}*/
-/*.col.form-group label {
-    min-width: 20%;
-}*/
 .form-row .col.form-group {
     margin: 1em 0;
-}
-.info-icon::after {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: small;
-    margin-left: 0.2em;
-    vertical-align: baseline;
 }
 .form-row.single-col {
     justify-content: center;
@@ -56,6 +61,14 @@
     font-style: italic;
 }
 
+/*Icons*/
+.info-icon::after {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: small;
+    margin-left: 0.2em;
+    vertical-align: baseline;
+}
+
 /*Messages visibility*/
 .hide-message {
     display: none;
@@ -65,6 +78,11 @@
 }
 .show-message-block {
     display: block !important;
+}
+
+/*Dialogs*/
+.dialog-content {
+    height: 100%;
 }
 
 /*User Cards*/
@@ -164,10 +182,27 @@ a, .btn-link {
     content: "An error has occurred."
 }
 
+
+
 /*Override Bootstrap*/
-.e-control, .e-css{
+.e-btn.e-danger,
+.e-css.e-btn.e-danger {
+    background-color: inherit !important;
+    color: inherit !important;
+    font-weight: bolder;
+}
+.e-btn.e-danger:hover,
+.e-css.e-btn.e-danger:hover,
+.e-btn.e-danger:active,
+.e-css.e-btn.e-danger:active{
+    background: #dc3545 !important;
+    border-color: #dc3545 !important;
+    color: #fff !important;
+}
+.e-control,
+.e-css {
     font-size: 1rem;
-/*    font-size: inherit;*/
+    /*    font-size: inherit;*/
 }
 input.e-input, 
 textarea.e-input, 
