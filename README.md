@@ -49,3 +49,4 @@ make RefreshSelectedUsers an Async method. ❌. This does not avoid the infinite
 - Hide Personal Information (MVP only because UX not very good)
 - Separate classes... huge impact. 
 - Remove Required from ApplicationUser and try to apply only in PersonalInformation by creating a subclass of ApplicationUser?
+33. Put more things in settings page: New box for password, download user data.
