@@ -49,3 +49,5 @@ make RefreshSelectedUsers an Async method. ❌. This does not avoid the infinite
 - Hide Personal Information (MVP only because UX not very good)
 - Separate classes... huge impact. 
 - Remove Required from ApplicationUser and try to apply only in PersonalInformation by creating a subclass of ApplicationUser?
+33. Put more things in settings page: New box for password, download user data.
+34. Fix exception thrown when using  NavigateToCsHtmlPage(Microsoft.JSInterop.JSException). See if I can hide it by commenting throw... attention to Exception box that appears in browser. That's the limit I cannot pass. If the exception is invisible to user.. Go ahead. Easy fixed by removing //await JSRuntime.InvokeAsync<object>("open", page, "_self"); //also valid with other a[target] values and replaced for await JSRuntime.InvokeVoidAsync("open", page, "_self");
