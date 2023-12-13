@@ -1,5 +1,5 @@
 ﻿<div class="row flex-grid e-cards">
-    @if(userList.Count == 0)
+    @if(teachersList.Count == 0)
     {
         <p>
             There are no teachers available for your search query.
@@ -7,9 +7,9 @@
     }
     else
     {
-        @foreach (ApplicationUser user in userList)
+        @foreach (ApplicationUser teacher in teachersList)
         {
-            <CascadingValue Value="user" Name="User">
+            <CascadingValue Value="teacher" Name="Teacher">
                 <UserCard></UserCard>
             </CascadingValue>
         }
@@ -17,7 +17,7 @@
 </div>
 @code {
     [CascadingParameter(Name = "UsersList")]
-    private List<ApplicationUser> userList { get; set; }
+    private List<ApplicationUser> teachersList { get; set; }
     [CascadingParameter(Name = "User")]
     ApplicationUser? user { get; set; }
 }

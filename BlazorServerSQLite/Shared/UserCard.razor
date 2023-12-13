@@ -1,4 +1,4 @@
-﻿@inject NavigationManager navigationManager
+﻿@inject NavigationManager Navigation
 @inject HttpClient Http
 
 <div class="col" id="User_@(teacher.Id)">
@@ -10,8 +10,9 @@
     </CardContent>
     <CardFooter>
         <SfButtonGroup CssClass="e-round-corner">
-            <ButtonGroupButton CssClass="e-primary">Contact</ButtonGroupButton>
-            <ButtonGroupButton CssClass="e-link">See details</ButtonGroupButton>
+                <ButtonGroupButton CssClass="e-primary">Contact</ButtonGroupButton>
+                <ButtonGroupButton CssClass="e-link" @onclick="@(e => NavigateToTeacherPage(e,( "/teachers/"+teacher.Id)))">
+                    See details</ButtonGroupButton>
             @if (loggedIn)
             {
                 <ButtonGroupButton CssClass="e-link" @onclick="@ToggleDo">@(done ? "Unsave" : "Save")</ButtonGroupButton>
@@ -65,7 +66,7 @@
     UserManager<ApplicationUser> userManager { get; set; }
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; }
-    [CascadingParameter(Name = "User")]
+    [CascadingParameter(Name = "Teacher")]
     ApplicationUser? teacher { get; set; }
     ApplicationUser? user { get; set; }
     string teacherImagePath { get; set; }
@@ -82,7 +83,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        baseUri = navigationManager.BaseUri;
+        baseUri = Navigation.BaseUri;
         teacherImagePath = baseUri + "img/users/" + teacher.Id + ".jpg";// "img/logo.png"
         var user2 = (await authenticationStateTask).User;
         if (user2.Identity.IsAuthenticated)
@@ -190,6 +191,10 @@
     {
         await this.UndoToastObj.HideAsync();
         isUndoToastShown = false;
+    }
+    async Task NavigateToTeacherPage(Microsoft.AspNetCore.Components.Web.MouseEventArgs args, string page)
+    {
+        Navigation.NavigateTo(page);
     }
 }
 

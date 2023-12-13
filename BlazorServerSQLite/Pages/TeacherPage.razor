@@ -1,0 +1,11 @@
+﻿@page "/teachers/{TeacherId}"
+
+<PageTitle>Teacher page</PageTitle>
+<Heading1 text="Teacher page"></Heading1>
+
+@TeacherId
+
+@code {
+    [Parameter]
+    public string? TeacherId { get; set; }
+}
