@@ -24,6 +24,11 @@ else
                       IconCss="e-icons e-home"
                       OnClick="@(() => NavigateToRazorPage("/"))"></SfButton>
         </div>
+        <div class="nav-item px-3">
+            <SfButton CssClass="nav-link e-inherit" Content="Teacher Search"
+                      IconCss="e-icons e-people"
+                      OnClick="@(() => NavigateToRazorPage("/teacher-search"))"></SfButton>
+        </div>
         <AuthorizeView Roles="Teacher" Context="teacherContext">
             <div class="nav-item px-3">
                 <SfButton CssClass="nav-link e-inherit" Content="Personal information"
@@ -34,7 +39,7 @@ else
         <AuthorizeView Roles="Administrator" Context="administratorContext">
             <div class="nav-item px-3">
                 <SfButton CssClass="nav-link e-inherit" Content="Teacher profile requests"
-                          OnClick="@(() => NavigateToRazorPage("/admin-teacher-profile-requests"))"></SfButton>
+                    OnClick="@(() => NavigateToRazorPage("/admin-teacher-profile-requests"))"></SfButton>
             </div>
         </AuthorizeView>
 @*         <div class="nav-item px-3">
@@ -44,8 +49,8 @@ else
         </div> *@
         <div class="nav-item px-3">
             <SfButton CssClass="nav-link e-inherit" Content="Settings"
-                      IconCss="e-icons e-settings"
-                      OnClick="@(() => NavigateToRazorPage("/settings"))"></SfButton>
+                IconCss="e-icons e-settings"
+                OnClick="@(() => NavigateToRazorPage("/settings"))"></SfButton>
         </div>
     </nav>
 </div>

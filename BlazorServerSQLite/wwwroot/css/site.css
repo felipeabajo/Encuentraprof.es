@@ -216,6 +216,20 @@ textarea.e-input,
     font-size: 1rem !important;
 /*  font-size: inherit;*/
 }
+*.e-btn-group.e-round-corner:not(.e-vertical):not(.e-rtl) .e-btn:first-of-type,
+*.e-css.e-btn-group.e-round-corner:not(.e-vertical):not(.e-rtl) .e-btn:first-of-type {
+    border-bottom-left-radius: 4px !important;
+    border-top-left-radius: 4px !important;
+}
+*.e-btn-group.e-round-corner:not(.e-vertical):not(.e-rtl) .e-btn:last-of-type,
+*.e-css.e-btn-group.e-round-corner:not(.e-vertical):not(.e-rtl) .e-btn:last-of-type {
+    border-bottom-right-radius: 4px !important;
+    border-top-right-radius: 4px !important;
+}
+*.e-btn-group.e-round-corner:not(.e-vertical):not(.e-rtl),
+*.e-css.e-btn-group.e-round-corner:not(.e-vertical):not(.e-rtl) {
+    border-radius: 4px !important;
+}
 
 /*Start CSS for Toast*/
 .action-span {

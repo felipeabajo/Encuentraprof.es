@@ -9,12 +9,14 @@
         <strong>@teacher.Price €</strong> hora
     </CardContent>
     <CardFooter>
-        <SfButton OnClick="ToggleDo">Save</SfButton>
-@*         <SfButtonGroup>
-            <ButtonGroupButton>Contact</ButtonGroupButton>
-            <ButtonGroupButton>See details</ButtonGroupButton>
-            <ButtonGroupButton>Save</ButtonGroupButton> onclick="ToggleDo"
-        </SfButtonGroup> *@
+        <SfButtonGroup CssClass="e-round-corner">
+            <ButtonGroupButton CssClass="e-primary">Contact</ButtonGroupButton>
+            <ButtonGroupButton CssClass="e-link">See details</ButtonGroupButton>
+            @if (loggedIn)
+            {
+                <ButtonGroupButton CssClass="e-link" @onclick="@ToggleDo">@(done ? "Unsave" : "Save")</ButtonGroupButton>
+            }
+        </SfButtonGroup>
     </CardFooter>
 </SfCard>
 </div>
@@ -58,7 +60,7 @@
     </ToastTemplates>
 </SfToast>
 
-@code {
+    @code {
     [Inject]
     UserManager<ApplicationUser> userManager { get; set; }
     [CascadingParameter]
@@ -72,8 +74,9 @@
     SfToast UndoToastObj;
     private bool isDoToastShown { get; set; }
     private bool isUndoToastShown { get; set; }
-    private bool? done = false;
+    private bool done = false;
     public List<string> savedTeachers { get; set; }
+    private bool loggedIn = false;
 
 
 
@@ -84,6 +87,7 @@
         var user2 = (await authenticationStateTask).User;
         if (user2.Identity.IsAuthenticated)
         {
+            loggedIn = true;
             user = await userManager.GetUserAsync(user2);
             var path = baseUri + $"TeacherSavings/GetSavedTeachers/?Id={user.Id}";
             var result2 = await Http.GetFromJsonAsync<List<string>>(path);
@@ -93,18 +97,8 @@
                 done = true;
             }
         }
-    }
 
-    // public async void PublicProfileValueChangeHandler(Syncfusion.Blazor.Buttons.ChangeEventArgs<bool?> args)
-    // {
-    //     if (user.PublicProfile == true)
-    //     {
-    //         user.EverPublicProfile = true;
-    //     }
-    //     await UpdateUserContext(user);
-    //     teacherNeverPublicAlert.Refresh();
-    //     await ToggleDo();
-    // }
+    }
 
     public async Task SaveTeacher()
     {
