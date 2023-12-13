@@ -69,3 +69,4 @@ It could be a good solution but again I find the problem that I need StateHasCha
 38. Remove icons from LoginDisplay (help, register and login). Include responsiveness for SearchBar.Quick implementation: hide AutoComplete fields for small screens. Problem: if they are null, the button will not take the user to the correct place. Try to make space by removing letters from every element of AppBar that have icons and remove non-essential elements, see next step. Also hide Login and register buttons.
 39. Remove commented code on UserCard. New iteration on UserCard.
 40. Restore LikeTeacher functionality.
+41. Avoid users saving if they are not logged ideally by conditionally opening a dialog inviting users to register or login in case they are not. For now, just hiding button if not logged in. Enable access to Teacher Search for logged in users by including a link to /teacher search in NavMenu
