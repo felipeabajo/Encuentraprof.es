@@ -27,15 +27,13 @@ else
             <img class="logo-image @deviceSize" src="img/logo.png" style="height:100%;" />
             <div class="menu-button-div @deviceSize">
                 <SfButton CssClass="navbar-toggler e-inherit"
-                          OnClick="@(() => ToggleNavMenu())"
-                          IconCss="e-icons e-menu"></SfButton>
+                    OnClick="@(() => ToggleNavMenu())"
+                    IconCss="e-icons e-menu"></SfButton>
+                <AppBarSpacer></AppBarSpacer>
+                <SfButton CssClass="help-button e-inherit"
+                    OnClick="@(() => NavigateToCsHtmlPage("help"))"></SfButton> @*  IconCss="e-icons e-circle-info" *@
             </div>
-            <AppBarSpacer></AppBarSpacer>
-            <div class="@deviceSize">
-            <SfButton CssClass="help-button e-inherit"
-                      OnClick="@(() => NavigateToCsHtmlPage("help"))"></SfButton> @*  IconCss="e-icons e-circle-info" *@
-            </div>
-            <SfButton CssClass="e-inherit"
+                <SfButton CssClass="e-inherit"
                       OnClick="@(() => NavigateToCsHtmlPage("/Identity/Account/Logout"))"></SfButton>  @* IconCss="e-icons e-export" *@
         </SfAppBar>
     </Authorized>
@@ -43,30 +41,30 @@ else
         <SfAppBar Mode="AppBarMode.Dense" ColorMode="AppBarColor.Primary">
             <img class="logo-image @deviceSize" src="img/logo.png" style="height:100%;" />
             <AppBarSpacer></AppBarSpacer>
-            <div class="d-flex" id="search-bar">
-                <div class="d-inline-flex m-1">
+@*             <div class="d-flex" id="search-bar">
+            *@                <div class="d-inline-flex m-2 search-bar-item">
                     <SfAutoComplete @ref="SpecialityAutoComplete" TValue="string" TItem="Speciality" Placeholder="Speciality"
                                     DataSource="@Speciality.Specialities" FilterType="Syncfusion.Blazor.DropDowns.FilterType.StartsWith">
                         <AutoCompleteFieldSettings Value="Name"></AutoCompleteFieldSettings>
                         <AutoCompleteEvents TItem="Speciality" TValue="string"></AutoCompleteEvents> @* ValueChange="@SpecialityChanged" *@
                     </SfAutoComplete>
                 </div>
-                <div class="d-inline-flex m-1">
+                <div class="d-inline-flex m-2 search-bar-item">
                     <SfAutoComplete @ref="ProvinceAutoComplete" TValue="string" TItem="Province" Placeholder="Province"
                                     DataSource="@Province.Provinces" FilterType="Syncfusion.Blazor.DropDowns.FilterType.StartsWith">
                         <AutoCompleteFieldSettings Value="Name"></AutoCompleteFieldSettings>
                         <AutoCompleteEvents TItem="Province" TValue="string"></AutoCompleteEvents> @* ValueChange="@ProvinceChanged" *@
                     </SfAutoComplete>
                 </div>
-                <div class="d-inline-flex m-1 @deviceSize">
+                <div class="d-inline-flex m-2 search-bar-item @deviceSize">
                     <SfButton CssClass="e-inherit search-button"
                               OnClick="SearchTeacher"
                               IconCss="e-icons e-search">
                         @searchButtonText
                     </SfButton>
                 </div>
-            </div>
-            <AppBarSpacer></AppBarSpacer>
+@*             </div>
+ *@            <AppBarSpacer></AppBarSpacer>
             <div class="@deviceSize">
                 <SfButton CssClass="help-button e-inherit" Content="Help"
                       OnClick="@(() => NavigateToRazorPage("/help"))"></SfButton> @* IconCss="e-icons e-circle-info" *@

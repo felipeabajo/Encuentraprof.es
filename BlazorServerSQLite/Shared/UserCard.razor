@@ -3,25 +3,16 @@
 <div class="col" id="User_@(user.Id)">
     <SfCard ID="" CssClass="user-card">
         <CardImage Image="@userImagePath" />
-        @* <CardHeader Title="@title" SubTitle="@user.Province" /> *@
-        @* <CardHeader Title="@user.ApprovedFirstname" SubTitle=@("Profe de " + user.Speciality + " en " + user.Province)></CardHeader> *@
+        <CardHeader Title="@user.Firstname" SubTitle=@(user.Speciality + ", " + user.Province)></CardHeader>
     <CardContent>
-            @* Descripción personal , bio  *@ @* Text="Contact" *@
-@*             <SfButton Content="Test" IsPrimary=true></SfButton>*@
- @*         <SfMenu TValue="MenuItem" Orientation="Syncfusion.Blazor.Navigations.Orientation.Horizontal">
-            <MenuItems>
-                <SfButton Content="Test"></SfButton>
-                <MenuItem> 
-                    <SfButton Content="Test"></SfButton>
-                </MenuItem>
-                <MenuItem Text="Add to favorites"></MenuItem>
-            </MenuItems>
-        </SfMenu> *@
+        <strong>@user.Price €</strong> hora
     </CardContent>
     <CardFooter>
-@*      <a href="/">@user.Province</a>  Link to topic page per Province when available (list of teachers of a certain province until then) 
-        <a href="/">@user.Speciality</a> *@
-        <strong>@user.Price €</strong> hora
+        <SfButtonGroup>
+            <ButtonGroupButton>Contact</ButtonGroupButton>
+            <ButtonGroupButton>See details</ButtonGroupButton>
+            <ButtonGroupButton>Add to favorites</ButtonGroupButton>
+        </SfButtonGroup>
     </CardFooter>
 </SfCard>
 </div>
