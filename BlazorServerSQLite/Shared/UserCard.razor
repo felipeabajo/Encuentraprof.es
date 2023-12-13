@@ -1,32 +1,201 @@
 ﻿@inject NavigationManager navigationManager
+@inject HttpClient Http
 
-<div class="col" id="User_@(user.Id)">
+<div class="col" id="User_@(teacher.Id)">
     <SfCard ID="" CssClass="user-card">
-        <CardImage Image="@userImagePath" />
-        <CardHeader Title="@user.Firstname" SubTitle=@(user.Speciality + ", " + user.Province)></CardHeader>
+        <CardImage Image="@teacherImagePath" />
+        <CardHeader Title="@teacher.Firstname" SubTitle=@(teacher.Speciality + ", " + teacher.Province)></CardHeader>
     <CardContent>
-        <strong>@user.Price €</strong> hora
+        <strong>@teacher.Price €</strong> hora
     </CardContent>
     <CardFooter>
-        <SfButtonGroup>
+        <SfButton OnClick="ToggleDo">Save</SfButton>
+@*         <SfButtonGroup>
             <ButtonGroupButton>Contact</ButtonGroupButton>
             <ButtonGroupButton>See details</ButtonGroupButton>
-            <ButtonGroupButton>Add to favorites</ButtonGroupButton>
-        </SfButtonGroup>
+            <ButtonGroupButton>Save</ButtonGroupButton> onclick="ToggleDo"
+        </SfButtonGroup> *@
     </CardFooter>
 </SfCard>
 </div>
 
+
+
+
+<SfToast ID="do-toast" @ref="DoToastObj" CssClass="toast_template"
+         Timeout="10000" ExtendedTimeout="5000">
+    <ToastPosition X="Left" Y="Bottom"></ToastPosition>
+    <ToastTemplates>
+        <Template>
+            <div id='template_toast'>
+                <div class="horizontal-align">
+                    <div class='toast-content'>
+                        <div class='toast-message'>
+                            Teacher saved.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </Template>
+    </ToastTemplates>
+</SfToast>
+
+<SfToast ID="undo-toast" @ref="UndoToastObj" CssClass="toast_template"
+         Timeout="10000" ExtendedTimeout="5000">
+    <ToastPosition X="Left" Y="Bottom"></ToastPosition>
+    <ToastTemplates>
+        <Template>
+            <div id='template_toast'>
+                <div class="horizontal-align">
+                    <div class='toast-content'>
+                        <div class='toast-message'>
+                            Teacher unsaved.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </Template>
+    </ToastTemplates>
+</SfToast>
+
 @code {
+    [Inject]
+    UserManager<ApplicationUser> userManager { get; set; }
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
     [CascadingParameter(Name = "User")]
+    ApplicationUser? teacher { get; set; }
     ApplicationUser? user { get; set; }
-    string userImagePath { get; set; }
+    string teacherImagePath { get; set; }
     private string baseUri { get; set; }
+    SfToast DoToastObj;
+    SfToast UndoToastObj;
+    private bool isDoToastShown { get; set; }
+    private bool isUndoToastShown { get; set; }
+    private bool? done = false;
+    public List<string> savedTeachers { get; set; }
+
+
 
     protected override async Task OnInitializedAsync()
     {
         baseUri = navigationManager.BaseUri;
-        userImagePath = baseUri + "img/users/" + user.Id + ".jpg";// "img/logo.png"
+        teacherImagePath = baseUri + "img/users/" + teacher.Id + ".jpg";// "img/logo.png"
+        var user2 = (await authenticationStateTask).User;
+        if (user2.Identity.IsAuthenticated)
+        {
+            user = await userManager.GetUserAsync(user2);
+            var path = baseUri + $"TeacherSavings/GetSavedTeachers/?Id={user.Id}";
+            var result2 = await Http.GetFromJsonAsync<List<string>>(path);
+            savedTeachers = result2;
+            if (savedTeachers.Contains(teacher.Id))
+            {
+                done = true;
+            }
+        }
+    }
+
+    // public async void PublicProfileValueChangeHandler(Syncfusion.Blazor.Buttons.ChangeEventArgs<bool?> args)
+    // {
+    //     if (user.PublicProfile == true)
+    //     {
+    //         user.EverPublicProfile = true;
+    //     }
+    //     await UpdateUserContext(user);
+    //     teacherNeverPublicAlert.Refresh();
+    //     await ToggleDo();
+    // }
+
+    public async Task SaveTeacher()
+    {
+        if (!isDoToastShown)
+        {
+            ShowDoToast();
+        }
+        var likingId = Guid.NewGuid().ToString();
+        TeacherSaving liking = new TeacherSaving
+            {
+                Id = likingId,
+                UserId = user.Id,
+                TeacherId = teacher.Id
+            };
+        var path = baseUri + "TeacherSavings/Add";
+        var response = await Http.PostAsJsonAsync<TeacherSaving>(path, liking);
+    }
+
+    public async Task UnsaveTeacher()
+    {
+        if (!isUndoToastShown)
+        {
+            ShowUndoToast();
+        }
+        var path = baseUri + "TeacherSavings/List?Id=" + user.Id;
+        var resultado = await Http.GetFromJsonAsync<List<TeacherSaving>>(path);
+        var liking = resultado.Where(x => x.TeacherId == teacher.Id).First();
+
+        var path2 = baseUri + "TeacherSavings/Delete";
+        var response = await Http.PostAsJsonAsync<TeacherSaving>(path2, liking);
+    }
+
+    async Task ToggleDo()
+    {
+        if (done == false)
+        {
+            if (isUndoToastShown)
+            {
+                await HideDoToast();
+                await HideUndoToast();
+            }
+            await Do();
+            await SaveTeacher();
+        }
+        if (done == true)
+        {
+            if (isDoToastShown)
+            {
+                await HideDoToast();
+            }
+            await Undo();
+            await UnsaveTeacher();
+        }
+        done = !done;
+    }
+
+    public async Task Do()
+    {
+        if (!isDoToastShown)
+        {
+            await ShowDoToast();
+        }
+        
+    }
+
+    public async Task Undo()
+    {
+        if (!isUndoToastShown)
+        {
+            await ShowUndoToast();
+        }
+    }
+    private async Task ShowDoToast()
+    {
+        await this.DoToastObj.ShowAsync();
+        isDoToastShown = true;
+    }
+    private async Task HideDoToast()
+    {
+        await this.DoToastObj.HideAsync();
+        isDoToastShown = false;
+    }
+    private async Task ShowUndoToast()
+    {
+        await this.UndoToastObj.ShowAsync();
+        isUndoToastShown = true;
+    }
+    private async Task HideUndoToast()
+    {
+        await this.UndoToastObj.HideAsync();
+        isUndoToastShown = false;
     }
 }
 

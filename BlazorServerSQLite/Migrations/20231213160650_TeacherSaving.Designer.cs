@@ -3,6 +3,7 @@ using System;
 using BlazorServerSQLite.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlazorServerSQLite.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231213160650_TeacherSaving")]
+    partial class TeacherSaving
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.14");
@@ -136,25 +139,6 @@ namespace BlazorServerSQLite.Migrations
                     b.ToTable("TeacherProfileRequests");
                 });
 
-            modelBuilder.Entity("BlazorServerSQLite.Data.TeacherSaving", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("TeacherId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TeacherSavings");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -183,22 +167,22 @@ namespace BlazorServerSQLite.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "a1496904-4b5a-4b32-94e4-082bd27339f8",
-                            ConcurrencyStamp = "e8ed74d0-7ac0-44e9-be9f-934bffd14b25",
+                            Id = "4a0698fd-c2a5-4f1c-b94d-a2ae774b5465",
+                            ConcurrencyStamp = "7dd1a1d0-c91d-4436-aace-0b27e1b45a49",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "ca4d536f-d81c-4ede-97ff-2293bf55a34b",
-                            ConcurrencyStamp = "aa72d02e-bd2e-4350-a901-7abf479b2a51",
+                            Id = "7214549a-e533-485d-be29-f663e07aa467",
+                            ConcurrencyStamp = "f2421d71-6320-47d6-ab91-d110ffadff95",
                             Name = "Teacher",
                             NormalizedName = "TEACHER"
                         },
                         new
                         {
-                            Id = "3ff719c5-1943-488e-b0cd-5eac45c083ff",
-                            ConcurrencyStamp = "095249c3-aa7f-4092-8bc5-1651cee435d8",
+                            Id = "de195f4a-b679-4d66-9377-1368d69dbc97",
+                            ConcurrencyStamp = "3fdd61be-78dc-4738-8bba-7c050dd15cd6",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         });

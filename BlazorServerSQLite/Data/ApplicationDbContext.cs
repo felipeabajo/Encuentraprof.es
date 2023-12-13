@@ -13,6 +13,7 @@ namespace BlazorServerSQLite.Data
         }
 
         public virtual DbSet<TeacherProfileRequest> TeacherProfileRequests { get; set; }
+        public virtual DbSet<TeacherSaving> TeacherSavings { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
