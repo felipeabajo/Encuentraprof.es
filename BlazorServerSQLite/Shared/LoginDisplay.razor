@@ -9,13 +9,16 @@
 @if (activeBreakpoint == "Small")
 {
     deviceSize = "small-device";
+    searchButtonText = "";
 }
 else if (activeBreakpoint == "Medium")
 {
     deviceSize = "medium-device";
+    searchButtonText = "Search";
 }
 else
 {
+    searchButtonText = "Search";
     deviceSize = "large-device";
 }
 <AuthorizeView>
@@ -28,17 +31,17 @@ else
                           IconCss="e-icons e-menu"></SfButton>
             </div>
             <AppBarSpacer></AppBarSpacer>
+            <div class="@deviceSize">
+            <SfButton CssClass="help-button e-inherit"
+                      OnClick="@(() => NavigateToCsHtmlPage("help"))"></SfButton> @*  IconCss="e-icons e-circle-info" *@
+            </div>
             <SfButton CssClass="e-inherit"
-                      OnClick="@(() => NavigateToCsHtmlPage("help"))"
-                      IconCss="e-icons e-circle-info"></SfButton>
-            <SfButton CssClass="e-inherit"
-                      OnClick="@(() => NavigateToCsHtmlPage("/Identity/Account/Logout"))"
-                      IconCss="e-icons e-export"></SfButton>
+                      OnClick="@(() => NavigateToCsHtmlPage("/Identity/Account/Logout"))"></SfButton>  @* IconCss="e-icons e-export" *@
         </SfAppBar>
     </Authorized>
     <NotAuthorized>
         <SfAppBar Mode="AppBarMode.Dense" ColorMode="AppBarColor.Primary">
-            <img src="img/logo.png" style="height:100%;" />
+            <img class="logo-image @deviceSize" src="img/logo.png" style="height:100%;" />
             <AppBarSpacer></AppBarSpacer>
             <div class="d-flex" id="search-bar">
                 <div class="d-inline-flex m-1">
@@ -55,24 +58,23 @@ else
                         <AutoCompleteEvents TItem="Province" TValue="string"></AutoCompleteEvents> @* ValueChange="@ProvinceChanged" *@
                     </SfAutoComplete>
                 </div>
-                <div class="d-inline-flex m-1">
-                    <SfButton CssClass="e-inherit"
+                <div class="d-inline-flex m-1 @deviceSize">
+                    <SfButton CssClass="e-inherit search-button"
                               OnClick="SearchTeacher"
                               IconCss="e-icons e-search">
-                        Search
+                        @searchButtonText
                     </SfButton>
                 </div>
             </div>
             <AppBarSpacer></AppBarSpacer>
-            <SfButton CssClass="e-inherit" Content="Help"
-                      OnClick="@(() => NavigateToRazorPage("/help"))"
-                      IconCss="e-icons e-circle-info"></SfButton>
-            <SfButton CssClass="e-inherit" Content="Register"
-                      OnClick="@(() => NavigateToCsHtmlPage("/Identity/Account/Register"))"
-                      IconCss="e-icons e-export"></SfButton>
-            <SfButton CssClass="e-inherit" Content="Login"
-                      OnClick="@(() => NavigateToCsHtmlPage("/Identity/Account/Login"))"
-                      IconCss="e-icons e-export"></SfButton>
+            <div class="@deviceSize">
+                <SfButton CssClass="help-button e-inherit" Content="Help"
+                      OnClick="@(() => NavigateToRazorPage("/help"))"></SfButton> @* IconCss="e-icons e-circle-info" *@
+            <SfButton CssClass="register-button e-inherit" Content="Register"
+                      OnClick="@(() => NavigateToCsHtmlPage("/Identity/Account/Register"))"></SfButton> @* IconCss="e-icons e-export" *@
+            <SfButton CssClass="login-button e-inherit" Content="Login"
+                      OnClick="@(() => NavigateToCsHtmlPage("/Identity/Account/Login"))"></SfButton>  @* IconCss="e-icons e-export" *@
+            </div>
         </SfAppBar>
     </NotAuthorized>
 </AuthorizeView>
@@ -90,6 +92,7 @@ else
     public NavMenu navMenu { get; set; }
     public static SfAutoComplete<string, Province> ProvinceAutoComplete = new SfAutoComplete<string, Province>();
     public static SfAutoComplete<string, Speciality> SpecialityAutoComplete = new SfAutoComplete<string, Speciality>();
+    private string searchButtonText { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -195,7 +198,10 @@ else
     .menu-button-div:not(.small-device) {
         display: none !important;
     }
-    .logo-image.small-device {
+    .logo-image.small-device,
+    .small-device .help-button,
+    .small-device .login-button,
+    .small-device .register-button {
         display: none !important;
     }
 </style>
