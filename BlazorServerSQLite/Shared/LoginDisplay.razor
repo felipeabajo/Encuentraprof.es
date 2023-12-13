@@ -40,26 +40,28 @@ else
         <SfAppBar Mode="AppBarMode.Dense" ColorMode="AppBarColor.Primary">
             <img src="img/logo.png" style="height:100%;" />
             <AppBarSpacer></AppBarSpacer>
-            <div class="d-inline-flex m-1">
-                <SfAutoComplete @ref="SpecialityAutoComplete" TValue="string" TItem="Speciality" Placeholder="Speciality"
-                                DataSource="@Speciality.Specialities" FilterType="Syncfusion.Blazor.DropDowns.FilterType.StartsWith">
-                    <AutoCompleteFieldSettings Value="Name"></AutoCompleteFieldSettings>
-                    <AutoCompleteEvents TItem="Speciality" TValue="string" ValueChange="@SpecialityChanged"></AutoCompleteEvents>
-                </SfAutoComplete>
-            </div>
-            <div class="d-inline-flex m-1">
-                <SfAutoComplete @ref="ProvinceAutoComplete" TValue="string" TItem="Province" Placeholder="Province"
-                                DataSource="@Province.Provinces" FilterType="Syncfusion.Blazor.DropDowns.FilterType.StartsWith">
-                    <AutoCompleteFieldSettings Value="Name"></AutoCompleteFieldSettings>
-                    <AutoCompleteEvents TItem="Province" TValue="string" ValueChange="@ProvinceChanged"></AutoCompleteEvents> 
-                </SfAutoComplete>
-            </div>
-            <div class="d-inline-flex m-1">
-                <SfButton CssClass="e-inherit"
-                    OnClick="SearchTeacher"
-                    IconCss="e-icons e-search">
-                    Search
-                </SfButton>
+            <div class="d-flex" id="search-bar">
+                <div class="d-inline-flex m-1">
+                    <SfAutoComplete @ref="SpecialityAutoComplete" TValue="string" TItem="Speciality" Placeholder="Speciality"
+                                    DataSource="@Speciality.Specialities" FilterType="Syncfusion.Blazor.DropDowns.FilterType.StartsWith">
+                        <AutoCompleteFieldSettings Value="Name"></AutoCompleteFieldSettings>
+                        <AutoCompleteEvents TItem="Speciality" TValue="string"></AutoCompleteEvents> @* ValueChange="@SpecialityChanged" *@
+                    </SfAutoComplete>
+                </div>
+                <div class="d-inline-flex m-1">
+                    <SfAutoComplete @ref="ProvinceAutoComplete" TValue="string" TItem="Province" Placeholder="Province"
+                                    DataSource="@Province.Provinces" FilterType="Syncfusion.Blazor.DropDowns.FilterType.StartsWith">
+                        <AutoCompleteFieldSettings Value="Name"></AutoCompleteFieldSettings>
+                        <AutoCompleteEvents TItem="Province" TValue="string"></AutoCompleteEvents> @* ValueChange="@ProvinceChanged" *@
+                    </SfAutoComplete>
+                </div>
+                <div class="d-inline-flex m-1">
+                    <SfButton CssClass="e-inherit"
+                              OnClick="SearchTeacher"
+                              IconCss="e-icons e-search">
+                        Search
+                    </SfButton>
+                </div>
             </div>
             <AppBarSpacer></AppBarSpacer>
             <SfButton CssClass="e-inherit" Content="Help"
@@ -86,16 +88,16 @@ else
     private bool collapseNavMenu { get; set; }
     [Parameter]
     public NavMenu navMenu { get; set; }
-    SfAutoComplete<string, Province> ProvinceAutoComplete = new SfAutoComplete<string, Province>();
-    SfAutoComplete<string, Speciality> SpecialityAutoComplete = new SfAutoComplete<string, Speciality>();
+    public static SfAutoComplete<string, Province> ProvinceAutoComplete = new SfAutoComplete<string, Province>();
+    public static SfAutoComplete<string, Speciality> SpecialityAutoComplete = new SfAutoComplete<string, Speciality>();
 
     protected override async Task OnInitializedAsync()
     {
-        editContext = new EditContext(this);
-        await LoadUsers();
-        provinceAppliedUsersList = usersList;
-        specialityAppliedUsersList = usersList;
-        selectedUsersList = usersList;
+        // editContext = new EditContext(this);
+        // await LoadUsers();
+        // provinceAppliedUsersList = usersList;
+        // specialityAppliedUsersList = usersList;
+        // selectedUsersList = usersList;
     }
 
 
@@ -130,40 +132,40 @@ else
         navMenu.ToggleNavMenu();
     }
 
-    private void ProvinceChanged(ChangeEventArgs<string, Province> args)
-    {
-        if (ProvinceAutoComplete.Value != null)
-        {
-            if (ProvinceAutoComplete.Value != "")
-            {
-                provinceAppliedUsersList = usersList.Where(x => x.Province == ProvinceAutoComplete.Value).ToList();
-            }
-        }
-        else
-        {
-            provinceAppliedUsersList = usersList;
-        }
-        selectedUsersList = (List<ApplicationUser>)usersList.AsQueryable().
-        Intersect(provinceAppliedUsersList).Intersect(specialityAppliedUsersList).ToList();
-    }
+    // private void ProvinceChanged(ChangeEventArgs<string, Province> args)
+    // {
+    //     if (ProvinceAutoComplete.Value != null)
+    //     {
+    //         if (ProvinceAutoComplete.Value != "")
+    //         {
+    //             provinceAppliedUsersList = usersList.Where(x => x.Province == ProvinceAutoComplete.Value).ToList();
+    //         }
+    //     }
+    //     else
+    //     {
+    //         provinceAppliedUsersList = usersList;
+    //     }
+    //     selectedUsersList = (List<ApplicationUser>)usersList.AsQueryable().
+    //     Intersect(provinceAppliedUsersList).Intersect(specialityAppliedUsersList).ToList();
+    // }
 
-    private void SpecialityChanged(ChangeEventArgs<string, Speciality> args)
-    {
+    // private void SpecialityChanged(ChangeEventArgs<string, Speciality> args)
+    // {
 
-        if (SpecialityAutoComplete.Value != null)
-        {
-            if (SpecialityAutoComplete.Value != "")
-            {
-                specialityAppliedUsersList = usersList.Where(x => x.Speciality == SpecialityAutoComplete.Value).ToList();
-            }
-        }
-        else
-        {
-            specialityAppliedUsersList = usersList;
-        }
-        selectedUsersList = (List<ApplicationUser>)usersList.AsQueryable().
-                Intersect(provinceAppliedUsersList).Intersect(specialityAppliedUsersList).ToList();
-    }
+    //     if (SpecialityAutoComplete.Value != null)
+    //     {
+    //         if (SpecialityAutoComplete.Value != "")
+    //         {
+    //             specialityAppliedUsersList = usersList.Where(x => x.Speciality == SpecialityAutoComplete.Value).ToList();
+    //         }
+    //     }
+    //     else
+    //     {
+    //         specialityAppliedUsersList = usersList;
+    //     }
+    //     selectedUsersList = (List<ApplicationUser>)usersList.AsQueryable().
+    //             Intersect(provinceAppliedUsersList).Intersect(specialityAppliedUsersList).ToList();
+    // }
 
     async Task LoadUsers()
     {

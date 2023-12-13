@@ -62,8 +62,24 @@
         await LoadUsers();
         provinceAppliedUsersList = usersList;
         specialityAppliedUsersList = usersList;
-        selectedUsersList = usersList;
+        // selectedUsersList = usersList;
+
+        if (LoginDisplay.SpecialityAutoComplete.Value != null)
+        {
+            //update specialityAppliedUsersList and selectedUserList
+            specialityAppliedUsersList = usersList.Where(x => x.Speciality == LoginDisplay.SpecialityAutoComplete.Value).ToList();
+        }
+
+        if (LoginDisplay.ProvinceAutoComplete.Value != null)
+        {
+            //update provinceAppliedUsersList
+            provinceAppliedUsersList = usersList.Where(x => x.Province == LoginDisplay.ProvinceAutoComplete.Value).ToList();
+        }
+
+        selectedUsersList = (List<ApplicationUser>)usersList.AsQueryable().
+                Intersect(provinceAppliedUsersList).Intersect(specialityAppliedUsersList).ToList();
     }
+
     async Task LoadUsers()
     {
         var path = Navigation.BaseUri + "Users/GetTeachersWithPublicProfile";
@@ -106,3 +122,9 @@
                 Intersect(provinceAppliedUsersList).Intersect(specialityAppliedUsersList).ToList();
     }
 }
+
+<style>
+    #search-bar{
+        display:none !important;
+    }
+</style>
