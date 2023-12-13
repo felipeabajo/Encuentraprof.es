@@ -10,17 +10,17 @@
 <EditForm EditContext="@editContext">
     <div class="form-row">
         <div class="col form-group">
-            <SfAutoComplete @ref="AutoCompleteObj1" TValue="string" TItem="Speciality" Placeholder="Speciality"
+            <SfAutoComplete @ref="SpecialityAutoComplete" TValue="string" TItem="Speciality" Placeholder="Speciality"
                             DataSource="@Speciality.Specialities" FilterType="Syncfusion.Blazor.DropDowns.FilterType.StartsWith">
                 <AutoCompleteFieldSettings Value="Name"></AutoCompleteFieldSettings>
                 <AutoCompleteEvents TItem="Speciality" TValue="string" ValueChange="@SpecialityChanged"></AutoCompleteEvents>
             </SfAutoComplete>
         </div>
         <div class="col form-group">
-            <SfAutoComplete @ref="AutoCompleteObj" TValue="string" TItem="Province" Placeholder="Province"
+            <SfAutoComplete @ref="ProvinceAutoComplete" TValue="string" TItem="Province" Placeholder="Province"
                             DataSource="@Province.Provinces" FilterType="Syncfusion.Blazor.DropDowns.FilterType.StartsWith">
                 <AutoCompleteFieldSettings Value="Name"></AutoCompleteFieldSettings>
-                <AutoCompleteEvents TItem="Province" TValue="string" ValueChange="@ProvinceChanged"></AutoCompleteEvents> @* Blur="@ProvinceBlur"  OnValueSelect="@ProvinceSelect"*@
+                <AutoCompleteEvents TItem="Province" TValue="string" ValueChange="@ProvinceChanged"></AutoCompleteEvents>
             </SfAutoComplete>
         </div>
     </div>
@@ -45,8 +45,8 @@
     UserManager<ApplicationUser> userManager { get; set; }
     ApplicationUser? user;
     private string baseUri = string.Empty;
-    SfAutoComplete<string, Province> AutoCompleteObj = new SfAutoComplete<string, Province>();
-    SfAutoComplete<string, Speciality> AutoCompleteObj1 = new SfAutoComplete<string, Speciality>();
+    SfAutoComplete<string, Province> ProvinceAutoComplete = new SfAutoComplete<string, Province>();
+    SfAutoComplete<string, Speciality> SpecialityAutoComplete = new SfAutoComplete<string, Speciality>();
 
 
     protected override async Task OnInitializedAsync()
@@ -89,11 +89,11 @@
 
     private void ProvinceChanged(ChangeEventArgs<string, Province> args)
     {
-        if (AutoCompleteObj.Value != null)
+        if (ProvinceAutoComplete.Value != null)
         {
-            if (AutoCompleteObj.Value != "")
+            if (ProvinceAutoComplete.Value != "")
             {
-                provinceAppliedUsersList = usersList.Where(x => x.Province == AutoCompleteObj.Value).ToList();
+                provinceAppliedUsersList = usersList.Where(x => x.Province == ProvinceAutoComplete.Value).ToList();
             }
         }
         else
@@ -107,11 +107,11 @@
     private void SpecialityChanged(ChangeEventArgs<string, Speciality> args)
     {
 
-        if (AutoCompleteObj1.Value != null)
+        if (SpecialityAutoComplete.Value != null)
         {
-            if (AutoCompleteObj1.Value != "")
+            if (SpecialityAutoComplete.Value != "")
             {
-                specialityAppliedUsersList = usersList.Where(x => x.Speciality == AutoCompleteObj1.Value).ToList();
+                specialityAppliedUsersList = usersList.Where(x => x.Speciality == SpecialityAutoComplete.Value).ToList();
             }
         }
         else

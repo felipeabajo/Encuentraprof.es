@@ -1,9 +1,18 @@
 ﻿<div class="row flex-grid e-cards">
-    @foreach (ApplicationUser user in userList)
+    @if(userList.Count == 0)
     {
-        <CascadingValue Value="user" Name="User">
-            <UserCard></UserCard>
-        </CascadingValue>
+        <p>
+            There are no teachers available for your search query.
+        </p>
+    }
+    else
+    {
+        @foreach (ApplicationUser user in userList)
+        {
+            <CascadingValue Value="user" Name="User">
+                <UserCard></UserCard>
+            </CascadingValue>
+        }
     }
 </div>
 @code {
