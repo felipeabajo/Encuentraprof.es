@@ -137,7 +137,7 @@
     {
         try
         {
-            await JSRuntime.InvokeAsync<object>("open", page, "_self"); //also valid with other a[target] values
+            await JSRuntime.InvokeVoidAsync("open", page, "_self");
         }
         catch (Exception e)
         {
