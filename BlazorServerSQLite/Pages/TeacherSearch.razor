@@ -1,6 +1,6 @@
 ﻿@page "/teacher-search"
 @inject HttpClient Http
-@inject NavigationManager navigationManager
+@inject NavigationManager Navigation
 @inject IJSRuntime JsRuntime
 
 
@@ -51,7 +51,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        baseUri = navigationManager.BaseUri;
+        baseUri = Navigation.BaseUri;
         var user2 = (await authenticationStateTask).User;
         if (user2.Identity.IsAuthenticated)
         {
@@ -66,7 +66,7 @@
     }
     async Task LoadUsers()
     {
-        var path = navigationManager.BaseUri + "Users/GetTeachersWithPublicProfile";
+        var path = Navigation.BaseUri + "Users/GetTeachersWithPublicProfile";
         var result = await Http.GetFromJsonAsync<List<ApplicationUser>>(path);
         usersList = result;
     }
@@ -87,7 +87,8 @@
         selectedUsersList = (List<ApplicationUser>)usersList.AsQueryable().
         Intersect(provinceAppliedUsersList).Intersect(specialityAppliedUsersList).ToList();
     }
-    private async void SpecialityChanged(ChangeEventArgs<string, Speciality> args)
+
+    private void SpecialityChanged(ChangeEventArgs<string, Speciality> args)
     {
 
         if (AutoCompleteObj1.Value != null)

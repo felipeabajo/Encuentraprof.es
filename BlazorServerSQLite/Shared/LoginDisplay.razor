@@ -1,5 +1,6 @@
-﻿@inject NavigationManager NavigationManager
-@inject IJSRuntime JSRuntime
+﻿@inject IJSRuntime JSRuntime
+@inject HttpClient Http
+@inject NavigationManager Navigation
 @inject ProtectedSessionStorage ProtectedSessionStorage
 @using Syncfusion.Blazor.Navigations
 @using Syncfusion.Blazor.SplitButtons
@@ -39,6 +40,28 @@ else
         <SfAppBar Mode="AppBarMode.Dense" ColorMode="AppBarColor.Primary">
             <img src="img/logo.png" style="height:100%;" />
             <AppBarSpacer></AppBarSpacer>
+            <div class="d-inline-flex m-1">
+                <SfAutoComplete @ref="SpecialityAutoComplete" TValue="string" TItem="Speciality" Placeholder="Speciality"
+                                DataSource="@Speciality.Specialities" FilterType="Syncfusion.Blazor.DropDowns.FilterType.StartsWith">
+                    <AutoCompleteFieldSettings Value="Name"></AutoCompleteFieldSettings>
+                    <AutoCompleteEvents TItem="Speciality" TValue="string" ValueChange="@SpecialityChanged"></AutoCompleteEvents>
+                </SfAutoComplete>
+            </div>
+            <div class="d-inline-flex m-1">
+                <SfAutoComplete @ref="ProvinceAutoComplete" TValue="string" TItem="Province" Placeholder="Province"
+                                DataSource="@Province.Provinces" FilterType="Syncfusion.Blazor.DropDowns.FilterType.StartsWith">
+                    <AutoCompleteFieldSettings Value="Name"></AutoCompleteFieldSettings>
+                    <AutoCompleteEvents TItem="Province" TValue="string" ValueChange="@ProvinceChanged"></AutoCompleteEvents> 
+                </SfAutoComplete>
+            </div>
+            <div class="d-inline-flex m-1">
+                <SfButton CssClass="e-inherit"
+                    OnClick="SearchTeacher"
+                    IconCss="e-icons e-search">
+                    Search
+                </SfButton>
+            </div>
+            <AppBarSpacer></AppBarSpacer>
             <SfButton CssClass="e-inherit" Content="Help"
                       OnClick="@(() => NavigateToRazorPage("/help"))"
                       IconCss="e-icons e-circle-info"></SfButton>
@@ -53,20 +76,46 @@ else
 </AuthorizeView>
 
 @code {
+    private EditContext editContext;
+    private List<ApplicationUser> usersList = new List<ApplicationUser>();
+    private List<ApplicationUser> selectedUsersList = new List<ApplicationUser>();
+    private List<ApplicationUser> provinceAppliedUsersList = new List<ApplicationUser>();
+    private List<ApplicationUser> specialityAppliedUsersList = new List<ApplicationUser>();
     private string deviceSize { get; set; }
     private string activeBreakpoint { get; set; }
     private bool collapseNavMenu { get; set; }
     [Parameter]
     public NavMenu navMenu { get; set; }
+    SfAutoComplete<string, Province> ProvinceAutoComplete = new SfAutoComplete<string, Province>();
+    SfAutoComplete<string, Speciality> SpecialityAutoComplete = new SfAutoComplete<string, Speciality>();
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        base.OnInitialized();
+        editContext = new EditContext(this);
+        await LoadUsers();
+        provinceAppliedUsersList = usersList;
+        specialityAppliedUsersList = usersList;
+        selectedUsersList = usersList;
     }
-    // protected override async Task OnAfterRenderAsync(bool firstRender)
+
+
+    // protected override void OnInitialized()
     // {
-    //     collapseNavMenu = await navMenu.GetCollapseMenu();
+    //     base.OnInitialized();
     // }
+
+    private void SearchTeacher()
+    {
+        if(ProvinceAutoComplete.Value == null && SpecialityAutoComplete.Value == null)
+        {
+            SpecialityAutoComplete.FocusAsync();
+        }
+        else
+        {
+            NavigateToRazorPage("/teacher-search");
+        }     
+    }
+
     protected async Task ChangeCollapseMenu()
     {
         var result = await ProtectedSessionStorage.GetAsync<string>("collapseMenu");
@@ -74,25 +123,69 @@ else
         bool o = !Boolean.Parse(stringResult);
         await ProtectedSessionStorage.SetAsync("collapseMenu", o.ToString());
     }
+
     public async void ToggleNavMenu()
     {
         collapseNavMenu = await navMenu.GetCollapseMenu();
         navMenu.ToggleNavMenu();
     }
+
+    private void ProvinceChanged(ChangeEventArgs<string, Province> args)
+    {
+        if (ProvinceAutoComplete.Value != null)
+        {
+            if (ProvinceAutoComplete.Value != "")
+            {
+                provinceAppliedUsersList = usersList.Where(x => x.Province == ProvinceAutoComplete.Value).ToList();
+            }
+        }
+        else
+        {
+            provinceAppliedUsersList = usersList;
+        }
+        selectedUsersList = (List<ApplicationUser>)usersList.AsQueryable().
+        Intersect(provinceAppliedUsersList).Intersect(specialityAppliedUsersList).ToList();
+    }
+
+    private void SpecialityChanged(ChangeEventArgs<string, Speciality> args)
+    {
+
+        if (SpecialityAutoComplete.Value != null)
+        {
+            if (SpecialityAutoComplete.Value != "")
+            {
+                specialityAppliedUsersList = usersList.Where(x => x.Speciality == SpecialityAutoComplete.Value).ToList();
+            }
+        }
+        else
+        {
+            specialityAppliedUsersList = usersList;
+        }
+        selectedUsersList = (List<ApplicationUser>)usersList.AsQueryable().
+                Intersect(provinceAppliedUsersList).Intersect(specialityAppliedUsersList).ToList();
+    }
+
+    async Task LoadUsers()
+    {
+        var path = Navigation.BaseUri + "Users/GetTeachersWithPublicProfile";
+        var result = await Http.GetFromJsonAsync<List<ApplicationUser>>(path);
+        usersList = result;
+    }
+
     async Task NavigateToRazorPage(string page)
     {
-        NavigationManager.NavigateTo(page);
+        Navigation.NavigateTo(page);
     }
 
     async Task NavigateToCsHtmlPage(string page)
     {
         try
         {
-            await JSRuntime.InvokeAsync<object>("open", page, "_self"); //also valid with other a[target] values
+            await JSRuntime.InvokeVoidAsync("open", page, "_self"); //also valid with other a[target] values
         }
         catch (Exception e)
         {
-            System.Diagnostics.Debug.WriteLine(e.ToString());
+            throw;
         }
     }
 }
