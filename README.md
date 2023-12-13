@@ -68,3 +68,4 @@ It could be a good solution but again I find the problem that I need StateHasCha
 37. Change names AutocompleteObj in TeacherSearch. Add text for TeacherSearch when there are no teachers available for a query.
 38. Remove icons from LoginDisplay (help, register and login). Include responsiveness for SearchBar.Quick implementation: hide AutoComplete fields for small screens. Problem: if they are null, the button will not take the user to the correct place. Try to make space by removing letters from every element of AppBar that have icons and remove non-essential elements, see next step. Also hide Login and register buttons.
 39. Remove commented code on UserCard. New iteration on UserCard.
+40. Restore LikeTeacher functionality.
