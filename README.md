@@ -55,4 +55,13 @@ make RefreshSelectedUsers an Async method. ❌. This does not avoid the infinite
 - From AirBnb I like the Search button that expands when user put focus on any of the fields.
 - From GitHub when I click on magnifyer and there is no query introduced, focus to form field. and more behaviours but focus on that point. This could be useful for improving UX instead of button disabled. 
 Build TeacherSearch bar. It is a form (inline) with two fields (Autocomplete). When user enters query, /teacher-search opens with the results of query. First milestone is building UI of the form. 
-I find a navigational problem caused by the decision of the navigation I used. Because the SfAppBar is narrow when user is logged in using big screens, the functionality of searching being logged in with wide devices is not going to have a good UX. QuickFix could be to put just a button with magnifyer icon in these cases that either leads to TeacherSearch page or opens a dialog the way AirBnb unfolds each field. Ignore this case for now and focus on not logged in. UI Scaffold done. 
+I find a navigational problem caused by the decision of the navigation I used. Because the SfAppBar is narrow when user is logged in using big screens, the functionality of searching being logged in with wide devices is not going to have a good UX. QuickFix could be to put just a button with magnifyer icon in these cases that either leads to TeacherSearch page or opens a dialog the way AirBnb unfolds each field. Ignore this case for now and focus on not logged in. UI Scaffold done.
+36. Getting query and show teachers in TeachersSearch. //How can I pass search query to that page? I see AutoComplete value is not removed, then I can take it directly from there...
+First thing: Access to LoginDisplay.SpecialityAutoComplete.Value and LoginDisplay.ProvinceAutoComplete.Value from TeacherSearch. 
+Options:
+- Using public static properties in LoginDisplay ✔ It works.
+The problem with this is that if navigation is already at /teacher-search, NavigateTo works but the selectedUsers is not updated because OnInitialized does not get executed. Solutions for this:
+- Move what's in OnInitialized to OnAfterRender.
+It could be a good solution but again I find the problem that I need StateHasChanged and that create and endless loop. 
+- Hide Search functionality in AppBAR (not good at all for UX). ✔ Para adelante
+- Calling a method from LoginDisplay that starts the logic. I try but I don't really know how to call it. Parent-child relationship through EventCallBacks (ñi - I don't have that relationship currently).
