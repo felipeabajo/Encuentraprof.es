@@ -72,3 +72,15 @@ It could be a good solution but again I find the problem that I need StateHasCha
 41. Avoid users saving if they are not logged ideally by conditionally opening a dialog inviting users to register or login in case they are not. For now, just hiding button if not logged in. Enable access to Teacher Search for logged in users by including a link to /teacher search in NavMenu.
 42. Continue with Checkout and NotContactedView. After following restore stripe steps, go back to previous point (NotContacted) Error found on UnblockTeacher // NotContactedTeacherView line 23
 Inside CheckoutController, sometimes execution stops at localhost/_vs/browserLink (not always) at CheckoutOrder after serverAddressFeature. Always execution stops at sessionId = await CheckOut... Continue with Checkout method service.CreateAsync option not working properly. Once it stopped execution suddently, another time it went to line 23 but in both cases, return session.Id didn't get executed. Problem fixed. It was due to not having the ApiKey assigned. Pushed to a new Branch (StripeIntegration).
+43. Now the problem I am going to focus on is localhost/_vs/browserLink (first time it gets executed). I am not sure this is a problem so continue with calls. In CheckoutController always goes to Ok (checkoutOrderResponse). In NotContactedTeacherView the call checkout calls checkout.js. From there, I don't know what's the next step. I put breakpoints in stripescript and they do not get executed.Stripescript gets executed when I reload the page. At this point, I am completely lost. I restart from previous commit integrating slowly the functionality contrasting the steps with the tutorial that I used originally if it's not deprecated.
+Watch out. Make sure Price is correct in StripeBillingRequest (probably that's a reference for a product that's not longer available)
+Make sure not including IAKVService is not going to create problems. Ocurrences: private readonly IAKVService _akv in StripeManager
+Make sure the reference to CommentUnblockin in Project setup - Blazor Server Azure (under StripeSuccess)
+does not have implications. 
+Make sure Stripe settings are properly setup in Program.cs only by including the line the same way I did
+for SmtpSettings (not including specific line for ApiKey - that's for AKV I think).
+Make sure not using StateContainer does not have implications, specially in Stripe Success because
+I have inserted the code directly... BTW, the teacher is not longer valid because I did migration.
+Make sure js folder is properly setup since it does not appear when I edit src (already rebuilt)
+Make sure js files for Stripe are still valid (no updates required)
+Make sure the Stripe credentials are right.
