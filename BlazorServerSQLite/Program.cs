@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
 using Syncfusion.Blazor;
+using Stripe;
+using BlazorServerSQLite.Managers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,10 +36,12 @@ builder.Services.AddServerSideBlazor().AddHubOptions(o =>
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
 builder.Services.AddSingleton<MyStateContainer>();
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
-
+builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("Stripe"));
 
 builder.Services.AddSingleton<IEmailSenderService, EmailSenderService>();
 builder.Services.AddControllers();
+StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
+builder.Services.AddTransient<StripeManager>();
 builder.Services.AddSyncfusionBlazor();
 Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MjgxNjczOUAzMjMzMmUzMDJlMzBQRXI5dEgwMEM3ZE9UekVyZENmYlF3ZzY3ck5aaVV3TnZKejdGL1VvTklZPQ==");
 builder.Services.ConfigureApplicationCookie(options =>

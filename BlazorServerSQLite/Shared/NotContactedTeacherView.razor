@@ -1,0 +1,32 @@
+﻿@using Newtonsoft.Json;
+@inject NavigationManager Navigation
+@inject HttpClient Http
+@inject IJSRuntime JsRuntime
+
+<SfButton @onclick="UnblockTeacher" CssClass="e-btn e-outline e-primary">Unblock</SfButton>
+
+@code {
+    [CascadingParameter(Name = "Teacher")]
+    ApplicationUser? teacher { get; set; }
+    string teacherImagePath { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        teacherImagePath = Navigation.BaseUri + "img/users/"
+            + teacher.Id + ".jpg";
+    }
+
+    private async Task UnblockTeacher()
+    {
+        var path = $"{Navigation.BaseUri}checkout";
+        var response = await Http.PostAsJsonAsync(path, teacher);
+        response.EnsureSuccessStatusCode();
+        var responseBody = await response.Content.ReadAsStringAsync();
+        var checkoutOrderResponse = JsonConvert.DeserializeObject<CheckoutOrderResponse>(responseBody);
+        await JsRuntime.InvokeVoidAsync("checkout", checkoutOrderResponse.PubKey, checkoutOrderResponse.SessionId);
+    }
+}
+
+<style>
+
+</style>

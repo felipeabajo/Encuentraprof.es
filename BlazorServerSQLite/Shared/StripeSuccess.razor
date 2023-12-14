@@ -1,0 +1,111 @@
+﻿@page "/success"
+@using Newtonsoft.Json;
+@inject HttpClient Http
+@inject NavigationManager navigationManager
+@inject MyStateContainer myStateContainer
+@inject IEmailSenderService EmailSenderService
+
+<h3>TestStripeSuccess</h3>
+
+@code {
+    private string baseUri = string.Empty;
+    private bool isDataLoaded;
+    //private string unblockingId = string.Empty;
+    ApplicationUser? user;
+    private bool userAuthenticated { get; set; } = false;
+    //private TeacherCurrentSelection currentTeacherSelection;
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+    [Inject]
+    UserManager<ApplicationUser> userManager { get; set; }
+    MailRequest mail = new MailRequest();
+    private List<ApplicationUser> teacherList = new List<ApplicationUser>();
+    private ApplicationUser selectedTeacher = new ApplicationUser();
+
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            isDataLoaded = true;
+        }
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var path1 = baseUri + "Users/GetUser";
+            //var teacherId = currentTeacherSelection.TeacherId;
+            var teacherId = "bfa20900-14e7-4564-8ed7-18a266e747a7";
+            var result1 = await Http.PostAsJsonAsync<string>(path1, teacherId);
+            var responseBody1 = await result1.Content.ReadAsStringAsync();
+            var getUserResponse = JsonConvert.DeserializeObject<ApplicationUser>(responseBody1);
+            selectedTeacher = getUserResponse;
+        }
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        baseUri = navigationManager.BaseUri;
+        //currentTeacherSelection = myStateContainer.CurrentTeacherSelection;
+
+        var user2 = (await authenticationStateTask).User;
+        if (user2.Identity.IsAuthenticated)
+        {
+            user = await userManager.GetUserAsync(user2);
+            userAuthenticated = true;
+        }
+        // else
+        // {
+        // }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await UnblockTeacher(selectedTeacher);
+
+    }
+
+    private void SendMailToUser()
+    {
+        string UrlBuild = baseUri;
+        string BodyBuild = "<a href=" + UrlBuild + ">Enlace</a>";
+        mail.ToEmail = user.Email;
+        mail.Subject = "New lessons request";
+        mail.Body = BodyBuild;
+        EmailSenderService.SendEmailAsync(mail);
+    }
+    private void SendMailToTeacher(ApplicationUser selectedTeacher)
+    {
+        string BodyBuild = "<a href=" + baseUri + ">Enlace</a>";
+        mail.ToEmail = selectedTeacher.Email;
+        mail.Subject = "You got unblocked by a user";
+        mail.Body = BodyBuild;
+        EmailSenderService.SendEmailAsync(mail);
+    }
+
+    async Task LoadTeachers()
+    {
+        var path = baseUri + "Users/ListTeachers";
+        var result = await Http.GetFromJsonAsync<List<ApplicationUser>>(path);
+        teacherList = result;
+    }
+
+    public async Task UnblockTeacher(ApplicationUser selectedTeacher)
+    {
+        var unblockingId = Guid.NewGuid().ToString();
+        TeacherContact unblocking = new TeacherContact
+            {
+                Id = unblockingId,
+                UserId = user.Id,
+                TeacherId = "bfa20900-14e7-4564-8ed7-18a266e747a7",
+                //TeacherId = currentTeacherSelection.TeacherId,
+                UnblockingDate = DateTime.Now
+            };
+        var path = navigationManager.BaseUri + "TeacherContacts/Add";
+        var response = await Http.PostAsJsonAsync<TeacherContact>(path, unblocking);
+        SendMailToUser();
+        SendMailToTeacher(selectedTeacher);
+        navigationManager.NavigateTo("/teachers/teachersdetails/" + "bfa20900-14e7-4564-8ed7-18a266e747a7");
+        //currentTeacherSelection.TeacherId
+     }
+}

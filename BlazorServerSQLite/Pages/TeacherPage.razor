@@ -1,11 +1,49 @@
 ﻿@page "/teachers/{TeacherId}"
+@inject HttpClient Http
+@inject NavigationManager Navigation
 
-<PageTitle>Teacher page</PageTitle>
-<Heading1 text="Teacher page"></Heading1>
+<PageTitle>@("Teacher" + teacher.Firstname)</PageTitle>
+<Heading1 text="@("Teacher" + teacher.Firstname)"></Heading1>
 
-@TeacherId
+
+    @if (!contacted)
+{
+    <CascadingValue Value="teacher" Name="Teacher">
+        <NotContactedTeacherView></NotContactedTeacherView>
+    </CascadingValue>
+}
 
 @code {
     [Parameter]
     public string? TeacherId { get; set; }
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+    [Inject]
+    UserManager<ApplicationUser> userManager { get; set; }
+    ApplicationUser? user;
+    ApplicationUser teacher = new ApplicationUser();
+    private bool contacted { get; set; } = false;
+    public List<string> contactedTeachers { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var path1 = Navigation.BaseUri + "Users/GetUser";
+        var result1 = await Http.PostAsJsonAsync<string>(path1, TeacherId);
+        var responseBody1 = await result1.Content.ReadAsStringAsync();
+        var getUserResponse = JsonConvert.DeserializeObject<ApplicationUser>(responseBody1);
+        teacher = getUserResponse;
+        var user2 = (await authenticationStateTask).User;
+        if (user2.Identity.IsAuthenticated)
+        {
+            user = await userManager.GetUserAsync(user2);
+            var path = Navigation.BaseUri + $"TeacherContacts/GetContactedTeachers/?Id={user.Id}";
+            var result2 = await Http.GetFromJsonAsync<List<string>>(path);
+            contactedTeachers = result2;
+            if (contactedTeachers.Contains(TeacherId))
+            {
+                contacted = true;
+            }
+        }
+    }
 }
