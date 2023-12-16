@@ -84,3 +84,14 @@ I have inserted the code directly... BTW, the teacher is not longer valid becaus
 Make sure js folder is properly setup since it does not appear when I edit src (already rebuilt)
 Make sure js files for Stripe are still valid (no updates required)
 Make sure the Stripe credentials are right.
+
+Next steps about StripeIntegration:
+Make sure if stripe.js and checkout.js are necessary
+Include Stripe key to secrets.json
+Make sure using BlazorServerSQLite.Managers; using BlazorServerSQLite.Shared are not neccessary in 
+StripeManagers and using BlazorServerSQLite.Shared in StripeController
+Change name of UnblockingDate in TeacherContact
+Check if APIResultModel is necessary.If so, make functionality clear and change names.
+Used in StripeManager so I think it is.
+Rename Controller for Checkout, s_wasmClientURL, remove spaces, 
+Make sure is safe to introduce the clientURL straightahead (number of port may change, production?)
